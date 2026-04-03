@@ -9,8 +9,5 @@ on:
 
 jobs:
   lint:
-    runs-on: windows-latest
-
-    steps:
-      
-        
+    
+  test:
