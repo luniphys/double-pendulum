@@ -7,6 +7,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <TextBlock Name="TestTextBlock" Text="None" FontSize="75" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+        <Button Name="TestButton" Width="100" Height ="50" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Run" FontSize="35" Click="TestButton_Click"/>
 
     </Grid>
 </Window>
