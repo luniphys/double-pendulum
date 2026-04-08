@@ -11,20 +11,5 @@ namespace double_pendulum
             InitializeComponent();
 
         }
-
-        private void TestButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (running)
-            {
-                TestButton.Content = "Run";
-                TestTextBlock.Text = "Stopped";
-            }
-            else
-            {
-                TestButton.Content = "Stop";
-                TestTextBlock.Text = "Running";
-            }
-            running = !running;
-        }
     }
 }
