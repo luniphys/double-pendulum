@@ -52,3 +52,11 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+
+# luni
+.vs/
+src/double-pendulum/bin/
+src/double-pendulum/obj/
+src/double-pendulum/.vs/
+*.user

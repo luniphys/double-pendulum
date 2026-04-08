@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/double-pendulum/double-pendulum.csproj" />
+  </Folder>
+</Solution>
