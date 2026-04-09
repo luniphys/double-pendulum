@@ -18,6 +18,20 @@ namespace double_pendulum.view.UserControls
             get { return (Brush)GetValue(SliderColorProperty); }
             set { SetValue(SliderColorProperty, value); }
         }
+
+
+        public static readonly DependencyProperty QuantityProperty =
+            DependencyProperty.Register(
+                nameof(Quantity),
+                typeof(string),
+                typeof(Sliders));
+
+        public string Quantity
+        {
+            get { return (string)GetValue(QuantityProperty); }
+            set { SetValue(QuantityProperty, value); }
+        }
+
         public Sliders()
         {
             InitializeComponent();
