@@ -4,57 +4,46 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:double_pendulum"
+        xmlns:UserControls="clr-namespace:double_pendulum.view.UserControls"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Background="#FF1e1e1e">
         <!--Window can only have 1 single node. Grid is best choice.-->
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="70"/>
-            <RowDefinition Height="2*"/>
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Menu Grid.Row="0" Grid.Column="1">
-            <MenuItem Header="File" FontSize="20">
-                <MenuItem Header="Exit" FontSize="20"/>
-            </MenuItem>
-            <MenuItem Header="Edit" FontSize="20"/>
-        </Menu>
-
-        <Rectangle Fill="Aquamarine" Grid.Row="1" Grid.Column="1" Height="70" MaxWidth="400"/>
-        <Grid Grid.Row="1" Grid.Column="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Button Content="Press" FontSize="30" Margin="10" FontStyle="Italic"/>
-            <TextBox Grid.Column="1" Margin="15" Text="Type Here!" TextAlignment="Center" FontSize="25"/>
-        </Grid>
-        <Rectangle Fill="Red" Grid.Row="2" Grid.Column="2"/>
-
-        <Grid Grid.Row="2" Grid.Column="0">
+        <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="12.5*"/>
+                <RowDefinition Height="12.5*"/>
+                <RowDefinition Height="12.5*"/>
+                <RowDefinition Height="12.5*"/>
+                <RowDefinition Height="50*"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="25"/>
-                <ColumnDefinition Width="50*"/>
-                <ColumnDefinition Width="25*"/>
-            </Grid.ColumnDefinitions>
 
-            <Rectangle Fill="Yellow" Grid.Row="0" Grid.Column="0"/>
-            <Rectangle Fill="Purple" Grid.Row="1" Grid.Column="1"/>
-            <Rectangle Fill="LightGreen" Grid.Row="2" Grid.Column="2"/>
+            <UserControls:Sliders Grid.Row="0"/>
+            <UserControls:Sliders Grid.Row="1"/>
+            <UserControls:Sliders Grid.Row="2"/>
+            <UserControls:Sliders Grid.Row="3"/>
 
         </Grid>
-        <Menu Grid.Column="2" Grid.Row="2"/>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="16.67*"/>
+                <RowDefinition Height="16.67*"/>
+                <RowDefinition Height="16.67*"/>
+                <RowDefinition Height="50*"/>
+            </Grid.RowDefinitions>
+
+            <UserControls:Sliders Grid.Row="0"/>
+            <UserControls:Sliders Grid.Row="1"/>
+            <UserControls:Sliders Grid.Row="2"/>
+
+        </Grid>
 
     </Grid>
 </Window>
