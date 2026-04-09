@@ -26,7 +26,7 @@
                                         <RepeatButton.Template>
                                             <ControlTemplate TargetType="RepeatButton">
                                                 <!-- Filled portion of the rail -->
-                                                <Border Height="4" Background="#e6de87" CornerRadius="2"/>
+                                                <Border Height="4" Background="{Binding SliderColor, RelativeSource={RelativeSource AncestorType=UserControl}}" CornerRadius="2"/>
                                             </ControlTemplate>
                                         </RepeatButton.Template>
                                     </RepeatButton>

@@ -17,32 +17,42 @@
 
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="12.5*"/>
-                <RowDefinition Height="12.5*"/>
-                <RowDefinition Height="12.5*"/>
-                <RowDefinition Height="12.5*"/>
-                <RowDefinition Height="50*"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="60*"/>
             </Grid.RowDefinitions>
 
-            <UserControls:Sliders Grid.Row="0"/>
-            <UserControls:Sliders Grid.Row="1"/>
-            <UserControls:Sliders Grid.Row="2"/>
-            <UserControls:Sliders Grid.Row="3"/>
+            <UserControls:Sliders Grid.Row="0" SliderColor="#2ba637" Margin="10,0,0,0"/>
+            <UserControls:Sliders Grid.Row="1" SliderColor="#2ba637" Margin="10,0,0,0"/>
+            <UserControls:Sliders Grid.Row="2" SliderColor="#2e60ab" Margin="10,0,0,0"/>
+            <UserControls:Sliders Grid.Row="3" SliderColor="#2e60ab" Margin="10,0,0,0"/>
 
         </Grid>
 
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="16.67*"/>
-                <RowDefinition Height="16.67*"/>
-                <RowDefinition Height="16.67*"/>
-                <RowDefinition Height="50*"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="60*"/>
             </Grid.RowDefinitions>
 
-            <UserControls:Sliders Grid.Row="0"/>
-            <UserControls:Sliders Grid.Row="1"/>
-            <UserControls:Sliders Grid.Row="2"/>
+            <UserControls:Sliders Grid.Row="0" SliderColor="#d62f4b"/>
+            <UserControls:Sliders Grid.Row="1" SliderColor="#e6de87"/>
+            <UserControls:Sliders Grid.Row="2" SliderColor="#e6de87"/>
 
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="33*"/>
+                    <ColumnDefinition Width="66*"/>
+                </Grid.ColumnDefinitions>
+                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                <TextBlock Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Show Trail" Foreground="White" FontSize="20" FontWeight="Bold"/>
+            </Grid>
+            
         </Grid>
 
     </Grid>
