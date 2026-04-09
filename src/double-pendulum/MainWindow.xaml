@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:double_pendulum"
-        xmlns:UserControls="clr-namespace:double_pendulum.view.UserControls"
+        xmlns:controls="clr-namespace:double_pendulum.Views.Controls"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" MinWidth="600" MinHeight="300">
     <Grid Background="#FF1e1e1e">
@@ -23,12 +23,10 @@
                 <RowDefinition Height="10*"/>
                 <RowDefinition Height="60*"/>
             </Grid.RowDefinitions>
-
-            <UserControls:Sliders Grid.Row="0" SliderColor="#2ba637" Quantity="L₁" Margin="10,0,0,0"/>
-            <UserControls:Sliders Grid.Row="1" SliderColor="#2ba637" Quantity="L₂" Margin="10,0,0,0"/>
-            <UserControls:Sliders Grid.Row="2" SliderColor="#2e60ab" Quantity="M₁" Margin="10,0,0,0"/>
-            <UserControls:Sliders Grid.Row="3" SliderColor="#2e60ab" Quantity="M₂" Margin="10,0,0,0"/>
-
+            <controls:QuantitySlider Grid.Row="0" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₁" MinSliderValue="0" MaxSliderValue="10" QuantityValue="1"/>
+            <controls:QuantitySlider Grid.Row="1" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₂" MinSliderValue="0" MaxSliderValue="10" QuantityValue="1"/>
+            <controls:QuantitySlider Grid.Row="2" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₁" MinSliderValue="0" MaxSliderValue="50" QuantityValue="10"/>
+            <controls:QuantitySlider Grid.Row="3" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₂" MinSliderValue="0" MaxSliderValue="50" QuantityValue="10"/>
         </Grid>
 
         <Grid Grid.Column="2">
@@ -39,18 +37,15 @@
                 <RowDefinition Height="10*"/>
                 <RowDefinition Height="60*"/>
             </Grid.RowDefinitions>
+            <controls:QuantitySlider Grid.Row="0" Margin="0,0,10,0" SliderColor="#d62f4b" Quantity="D" MinSliderValue="0" MaxSliderValue="10" QuantityValue="1"/>
+            <controls:QuantitySlider Grid.Row="1" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₁" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="30"/>
+            <controls:QuantitySlider Grid.Row="2" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₂" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="40"/>
 
-            <UserControls:Sliders Grid.Row="0" SliderColor="#d62f4b" Quantity="D" Margin="0,0,10,0"/>
-            <UserControls:Sliders Grid.Row="1" SliderColor="#e6de87" Quantity="θ₁" Margin="0,0,10,0"/>
-            <UserControls:Sliders Grid.Row="2" SliderColor="#e6de87" Quantity="θ₂" Margin="0,0,10,0"/>
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,5">
+                <CheckBox VerticalAlignment="Center"/>
+                <TextBlock VerticalAlignment="Center" Text="Show Trail" Foreground="White" FontSize="20" FontWeight="Bold" Margin="8,0,0,1"/>
+            </StackPanel>
 
-            <Viewbox Grid.Row="3" HorizontalAlignment="Left" Margin="10,0,0,5" StretchDirection="Both" Stretch="Uniform">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <CheckBox VerticalAlignment="Center"/>
-                    <TextBlock VerticalAlignment="Center" Text="Show Trail" Foreground="White" FontSize="20" FontWeight="Bold" Margin="8,0,0,1"/>
-                </StackPanel>
-            </Viewbox>
-            
         </Grid>
 
     </Grid>
