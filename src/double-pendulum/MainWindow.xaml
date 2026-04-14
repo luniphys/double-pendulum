@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:double_pendulum"
         xmlns:controls="clr-namespace:double_pendulum.Views.Controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" MinWidth="600" MinHeight="300">
+        Title="MainWindow" Height="450" Width="800" MinWidth="600" MinHeight="300"
+        Focusable="True" PreviewMouseDown="Window_PreviewMouseDown">
     <Grid Background="#FF1e1e1e">
         <!--Window can only have 1 single node. Grid is best choice.-->
         <Grid.ColumnDefinitions>
@@ -27,6 +28,13 @@
             <controls:QuantitySlider Grid.Row="1" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₂" MinSliderValue="0" MaxSliderValue="10" QuantityValue="1"/>
             <controls:QuantitySlider Grid.Row="2" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₁" MinSliderValue="0" MaxSliderValue="50" QuantityValue="10"/>
             <controls:QuantitySlider Grid.Row="3" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₂" MinSliderValue="0" MaxSliderValue="50" QuantityValue="10"/>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20*"/>
+                <RowDefinition Height="80*"/>
+            </Grid.RowDefinitions>
         </Grid>
 
         <Grid Grid.Column="2">

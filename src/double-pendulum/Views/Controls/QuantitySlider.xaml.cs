@@ -72,5 +72,16 @@ namespace double_pendulum.Views.Controls
         {
             InitializeComponent();
         }
+
+        private void TextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                var textBox = (TextBox)sender;
+                var binding = textBox.GetBindingExpression(TextBox.TextProperty);
+                binding?.UpdateSource();
+                Sliding.Focus();
+            }
+        }
     }
 }
