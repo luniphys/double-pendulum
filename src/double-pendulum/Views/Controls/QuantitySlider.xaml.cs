@@ -40,7 +40,12 @@ namespace double_pendulum.Views.Controls
             DependencyProperty.Register(
                 nameof(QuantityValue),
                 typeof(double),
-                typeof(QuantitySlider));
+                typeof(QuantitySlider),
+                new FrameworkPropertyMetadata(
+                    0.0,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                    null,
+                    CoerceQuantityValue));
 
 
         public double MinSliderValue
@@ -67,10 +72,27 @@ namespace double_pendulum.Views.Controls
                 typeof(QuantitySlider));
 
 
-
         public QuantitySlider()
         {
             InitializeComponent();
+        }
+
+        private static object CoerceQuantityValue(DependencyObject d, object baseValue)
+        {
+            var control = (QuantitySlider)d;
+            double value = (double)baseValue;
+            double min = control.MinSliderValue;
+            double max = control.MaxSliderValue;
+
+            if (min > max)
+            {
+                var tmp = min;
+                min = max;
+                max = tmp;
+            }
+            if (value < min) { return min; }
+            if (value > max) { return max; }
+            return value;
         }
 
         private void TextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
