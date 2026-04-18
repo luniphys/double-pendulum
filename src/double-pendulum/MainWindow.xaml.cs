@@ -1,4 +1,5 @@
-﻿using System.Drawing.Drawing2D;
+﻿using double_pendulum.Services;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,7 +13,6 @@ namespace double_pendulum
         public MainWindow()
         {
             InitializeComponent();
-
         }
 
         // Check if clicked element is not a textbox, update values and clear focus
@@ -41,6 +41,19 @@ namespace double_pendulum
                 element = VisualTreeHelper.GetParent(element);
             }
             return false;
+        }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            PendulumParameters parameters = new PendulumParameters(
+                (float)SliderL1.QuantityValue,
+                (float)SliderL2.QuantityValue,
+                (float)SliderM1.QuantityValue,
+                (float)SliderM2.QuantityValue,
+                (float)SliderA1.QuantityValue,
+                (float)SliderA2.QuantityValue,
+                (float)SliderD.QuantityValue
+                );
         }
     }
 }

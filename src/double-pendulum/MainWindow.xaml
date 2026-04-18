@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:double_pendulum"
         xmlns:controls="clr-namespace:double_pendulum.Views.Controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" MinWidth="600" MinHeight="300"
+        WindowStartupLocation="CenterScreen"
+        Title="Double Pendulum" Height="450" Width="800" MinWidth="600" MinHeight="400"
         Focusable="True" PreviewMouseDown="Window_PreviewMouseDown">
     <Window.Resources>
         <Style TargetType="Button">
@@ -15,9 +16,8 @@
             <Setter Property="FontSize" Value="20"/>
             <Setter Property="BorderBrush" Value="WhiteSmoke"/>
             <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="MinWidth" Value="150"/>
+            <Setter Property="MinWidth" Value="75"/>
             <Setter Property="MaxWidth" Value="250"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="MaxHeight" Value="65"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -25,9 +25,18 @@
                         <Border Background="{TemplateBinding Background}"
                                 CornerRadius="10"
                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}">
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                x:Name="border">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -49,10 +58,10 @@
                 <RowDefinition Height="10*"/>
                 <RowDefinition Height="60*"/>
             </Grid.RowDefinitions>
-            <controls:QuantitySlider Grid.Row="0" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₁" MinSliderValue="0" MaxSliderValue="10" QuantityValue="1"/>
-            <controls:QuantitySlider Grid.Row="1" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₂" MinSliderValue="0" MaxSliderValue="10" QuantityValue="1"/>
-            <controls:QuantitySlider Grid.Row="2" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₁" MinSliderValue="0" MaxSliderValue="50" QuantityValue="10"/>
-            <controls:QuantitySlider Grid.Row="3" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₂" MinSliderValue="0" MaxSliderValue="50" QuantityValue="10"/>
+            <controls:QuantitySlider Grid.Row="0" x:Name="SliderL1" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₁" MinSliderValue="0" MaxSliderValue="10" QuantityValue="1"/>
+            <controls:QuantitySlider Grid.Row="1" x:Name="SliderL2" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₂" MinSliderValue="0" MaxSliderValue="10" QuantityValue="1"/>
+            <controls:QuantitySlider Grid.Row="2" x:Name="SliderM1" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₁" MinSliderValue="0" MaxSliderValue="50" QuantityValue="10"/>
+            <controls:QuantitySlider Grid.Row="3" x:Name="SliderM2" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₂" MinSliderValue="0" MaxSliderValue="50" QuantityValue="10"/>
         </Grid>
 
         <Grid Grid.Column="1">
@@ -66,10 +75,10 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Button Name="StopButton" Margin="30,20,15,20" Background="Red" Content="Stop"/>
-                <Button Grid.Column="1" Name="StartButton" Margin="15,20,30,20" Background="Green" Content="Start"/>
+                <Button Grid.Column="1" Name="StartButton" Margin="15,20,30,20" Background="Green" Content="Start" Click="StartButton_Click"/>
             </Grid>
             <Grid Grid.Row="1">
-                <!-- Here goes pendulum animation -->
+                <Canvas x:Name="PendulumCanvas" Background="Transparent"/>
             </Grid>
         </Grid>
 
@@ -81,9 +90,9 @@
                 <RowDefinition Height="10*"/>
                 <RowDefinition Height="60*"/>
             </Grid.RowDefinitions>
-            <controls:QuantitySlider Grid.Row="0" Margin="0,0,10,0" SliderColor="#d62f4b" Quantity="D" MinSliderValue="0" MaxSliderValue="10" QuantityValue="1"/>
-            <controls:QuantitySlider Grid.Row="1" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₁" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="30"/>
-            <controls:QuantitySlider Grid.Row="2" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₂" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="40"/>
+            <controls:QuantitySlider Grid.Row="0" x:Name="SliderD" Margin="0,0,10,0" SliderColor="#d62f4b" Quantity="D" MinSliderValue="0" MaxSliderValue="10" QuantityValue="1"/>
+            <controls:QuantitySlider Grid.Row="1" x:Name="SliderA1" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₁" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="30"/>
+            <controls:QuantitySlider Grid.Row="2" x:Name="SliderA2" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₂" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="40"/>
 
             <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,5">
                 <CheckBox VerticalAlignment="Center"/>
