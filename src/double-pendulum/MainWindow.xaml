@@ -43,7 +43,6 @@
         </Style>
     </Window.Resources>
     <Grid Background="#FF1e1e1e">
-        <!--Window can only have 1 single node. Grid is best choice.-->
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="2*"/>
@@ -74,8 +73,8 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Button Name="StopButton" Margin="30,20,15,20" Background="Red" Content="Stop"/>
-                <Button Grid.Column="1" Name="StartButton" Margin="15,20,30,20" Background="Green" Content="Start" Click="StartButton_Click"/>
+                <Button Margin="30,20,15,20" Background="Red" Content="Reset" Click="ResetButton_Click"/>
+                <Button Grid.Column="1" Margin="15,20,30,20" Background="Green" Content="Start" Click="StartButton_Click"/>
             </Grid>
             <Grid Grid.Row="1">
                 <Canvas x:Name="PendulumCanvas" Background="Transparent"/>

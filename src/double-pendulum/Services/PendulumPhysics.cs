@@ -1,38 +1,46 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace double_pendulum.Services;
+
+/// <summary>
+/// Provides physics simulation for a double pendulum using numerical integration method Runge-Kutta of 4th order.
+/// </summary>
 
 public class PendulumPhysics
 {
 	const float gravity = 9.81f;
 	float stepSize = 0.01f;
 
+	Vector2 state;
+	
     PendulumParameters parameters;
 
-    public PendulumPhysics()
+    public PendulumPhysics(PendulumParameters parameters)
 	{
+		this.parameters = parameters;
+		state = Initialization();
     }
 
-	Vector2 Initializtion()
+	Vector2 Initialization()
 	{
         float startingAngle = parameters.Angle1;
         float startingAngularVelocity = 0.0f;
-        Vector2 initialVector = new Vector2(startingAngularVelocity, startingAngle);
+        Vector2 initialState = new Vector2(startingAngle, startingAngularVelocity);
 
-        Vector2 euklidPostion = PolarToEuklid(initialVector);
-
-        return euklidPostion;
+        return initialState;
     }
 
-	Vector2 Step(Vector2 vectorOld)
+	public void Step()
 	{
-		Vector2 vectorNew = RK4(vectorOld);
+		state = RK4(state);
+    }
 
-		Vector2 euklidPosition = PolarToEuklid(vectorNew);
+    public Vector2 GetPosition()
+	{
+		Vector2 euklidPosition = PolarToEuklid(state);
 
 		return euklidPosition;
-    }
+	}
 
 	Vector2 DEQ(Vector2 vector)
 	{
@@ -41,21 +49,21 @@ public class PendulumPhysics
 
 		float angularAcceleration = (float)(-gravity / parameters.Length1 * Math.Sin(angle) - parameters.Damp * angularVelocity);
 
-        Vector2 res = new Vector2(angularVelocity, angularAcceleration);
+        Vector2 vectorDerivative = new Vector2(angularVelocity, angularAcceleration);
 
-		return res;
+		return vectorDerivative;
 	}
 
-	Vector2 RK4(Vector2 vectorOld)
+	Vector2 RK4(Vector2 stateOld)
 	{
-        Vector2 k0 = DEQ(vectorOld);
-        Vector2 k1 = DEQ(vectorOld + (stepSize * 0.5f) * k0);
-        Vector2 k2 = DEQ(vectorOld + (stepSize * 0.5f) * k1);
-        Vector2 k3 = DEQ(vectorOld + stepSize * k2);
+        Vector2 k0 = DEQ(stateOld);
+        Vector2 k1 = DEQ(stateOld + (stepSize * 0.5f) * k0);
+        Vector2 k2 = DEQ(stateOld + (stepSize * 0.5f) * k1);
+        Vector2 k3 = DEQ(stateOld + stepSize * k2);
 
-		Vector2 vectorNew = vectorOld + stepSize / 6f * (k0 + 2f * k1 + 2f * k2 + k3);
+		Vector2 stateNew = stateOld + stepSize / 6f * (k0 + 2f * k1 + 2f * k2 + k3);
 
-		return vectorNew;
+		return stateNew;
     }
 
 	float X1(float angle1)
@@ -66,6 +74,7 @@ public class PendulumPhysics
     {
         return (float)(-parameters.Length1 * Math.Cos(angle1));
     }
+
 	float X2(float angle1, float angle2)
 	{
         return (float)(parameters.Length1 * Math.Sin(angle1) + parameters.Length2 + Math.Sin(angle2));

@@ -1,15 +1,21 @@
 ﻿using double_pendulum.Services;
-using System.Diagnostics;
+using double_pendulum.Views;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Numerics;
+using System.Windows.Threading;
 
 namespace double_pendulum
 {
     public partial class MainWindow : Window
 
     {
+        PendulumPhysics pendulum;
+        PendulumRenderer renderer;
+        DispatcherTimer timer;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -54,6 +60,41 @@ namespace double_pendulum
                 (float)SliderA2.QuantityValue,
                 (float)SliderD.QuantityValue
                 );
+
+            pendulum = new PendulumPhysics(parameters);
+            renderer = new PendulumRenderer(PendulumCanvas);
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(10);
+            timer.Tick += Timer_Tick;
+            timer.Start();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            pendulum.Step();
+            renderer.Draw(pendulum.GetPosition(), new Vector2(0, 0));
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            timer?.Stop();
+            renderer.ClearCanvas();
+
+            PendulumParameters parameters = new PendulumParameters(
+                (float)SliderL1.QuantityValue,
+                (float)SliderL2.QuantityValue,
+                (float)SliderM1.QuantityValue,
+                (float)SliderM2.QuantityValue,
+                (float)SliderA1.QuantityValue,
+                (float)SliderA2.QuantityValue,
+                (float)SliderD.QuantityValue
+                );
+
+            pendulum = new PendulumPhysics(parameters);
+            renderer = new PendulumRenderer(PendulumCanvas);
+
+            renderer.Draw(pendulum.GetPosition(), new Vector2(0, 0));
         }
     }
 }
