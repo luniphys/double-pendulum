@@ -16,11 +16,11 @@ $$
 m_2 l_2 \ddot{\theta}_2 + m_2 l_1 \ddot{\theta}_1 \cdot \cos(\theta_1 - \theta_2) - m_2 l_1 \dot{\theta}_1^2 \cdot \sin(\theta_1 - \theta_2) + m_2 g \cdot \sin(\theta_2) + b \dot{\theta}_2 = 0
 $$
 
-With the state vector defined as:
+With the state vector defined as
 
-$$
-\vec{y} = (\theta_1, \theta_2, \omega_1, \omega_2)^T
-$$
+```math
+\vec{y} = (\theta_1, \theta_2, \omega_1, \omega_2)^T$
+```
 
 we can transform the above into a 1 dimensional system:
 
@@ -32,13 +32,17 @@ $$
 
 To get expressions for $(\ddot{\theta}_1, \ddot{\theta}_2)$ we need to solve the linear system:
 
+```math
 $$
 \begin{pmatrix} (m_1 + m_2) l_1 & m_2 l_2 \cdot \cos(\theta_1 - \theta_2) \\ m_2 l_1 \cdot \cos(\theta_1 - \theta_2) & m_2 l_2 \end{pmatrix} \cdot \begin{pmatrix} \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = \begin{pmatrix} -m_2 l_2 \omega_2^2 \cdot \sin(\theta_1 - \theta_2) - (m_1 + m_2) g \cdot \sin(\theta_1) - b \omega_1 \\ m_2 l_1 \omega_1^2 \cdot \sin(\theta_1 - \theta_2) - m_2 g \cdot \sin(\theta_2) - b \omega_2 \end{pmatrix}
 $$
+```
 
+```math
 $$
 A \cdot \begin{pmatrix} \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = C \iff \begin{pmatrix} \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = A^{-1} \cdot C
 $$
+```
 
 With this we can use the Runge-Kutta method of 4th order for numeric integration.
 
