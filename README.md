@@ -16,7 +16,15 @@ $$
 m_2 l_2 \ddot{\theta}_2 + m_2 l_1 \ddot{\theta}_1 \cdot \cos(\theta_1 - \theta_2) - m_2 l_1 \dot{\theta}_1^2 \cdot \sin(\theta_1 - \theta_2) + m_2 g \cdot \sin(\theta_2) + b \dot{\theta}_2 = 0
 $$
 
-With the state vector defined as $\vec{y} = (\theta_1, \theta_2, \omega_1, \omega_2)^T$ we can transform the above into a 1 dimensional system:
+We can describe the state of the double pendulum with a vector defined as:
+
+```math
+$$
+\vec{y} = (\theta_1, \theta_2, \omega_1, \omega_2)^T
+$$
+```
+
+With this state vector, we can transform the equations of motions into a 1-dimensional system:
 
 ```math
 $$
@@ -42,7 +50,7 @@ $$
 
 <br />
 
-With this we can use the Runge-Kutta method of 4th order for numeric integration.
+Finally we can use the Runge-Kutta method of 4th order for numeric integration, to get solutions for the state.
 
 $$
 \vec{y}_{i+1} = \vec{y}_i + \frac{h}{6} \cdot \left(\vec{\kappa_0} + 2 \vec{\kappa_1} + 2 \vec{\kappa_2} + \vec{\kappa_3} \right)
