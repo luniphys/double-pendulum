@@ -1,4 +1,4 @@
-﻿[![.github/workflows/ci.yml](https://github.com/luniphys/double-pendulum/actions/workflows/ci.yml/badge.svg)](https://github.com/luniphys/double-pendulum/actions/workflows/ci.yml)
+[![.github/workflows/ci.yml](https://github.com/luniphys/double-pendulum/actions/workflows/ci.yml/badge.svg)](https://github.com/luniphys/double-pendulum/actions/workflows/ci.yml)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -25,54 +25,17 @@ $$
 we can transform the above into a 1 dimensional system:
 
 $$
-\dot{\vec{y}} =
-\begin{pmatrix}
-\dot{\theta}_1 \\
-\dot{\theta}_2 \\
-\ddot{\theta}_1 \\
-\ddot{\theta}_2
-\end{pmatrix}
-=
-\begin{pmatrix}
-\omega_1 \\
-\omega_2 \\
-g_1(\theta_1, \theta_2, \omega_1, \omega_2) \\
-g_2(\theta_1, \theta_2, \omega_1, \omega_2)
-\end{pmatrix}
-= \vec{f}(\theta_1, \theta_2, \omega_1, \omega_2)
+\dot{\vec{y}} = \begin{pmatrix} \dot{\theta}_1 \\ \dot{\theta}_2 \\ \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = \begin{pmatrix} \omega_1 \\ \omega_2 \\ g_1(\theta_1, \theta_2, \omega_1, \omega_2) \\ g_2(\theta_1, \theta_2, \omega_1, \omega_2) \end{pmatrix} = \vec{f}(\theta_1, \theta_2, \omega_1, \omega_2)
 $$
 
 To get expressions for $(\ddot{\theta}_1, \ddot{\theta}_2)$ we need to solve the linear system:
 
 $$
-\begin{pmatrix}
-(m_1 + m_2) l_1 & m_2 l_2 \cdot \cos(\theta_1 - \theta_2) \\
-m_2 l_1 \cdot \cos(\theta_1 - \theta_2) & m_2 l_2
-\end{pmatrix}
-\cdot
-\begin{pmatrix}
-\ddot{\theta}_1 \\
-\ddot{\theta}_2
-\end{pmatrix}
-=
-\begin{pmatrix}
--m_2 l_2 \omega_2^2 \cdot \sin(\theta_1 - \theta_2) - (m_1 + m_2) g \cdot \sin(\theta_1) - b \omega_1 \\
-m_2 l_1 \omega_1^2 \cdot \sin(\theta_1 - \theta_2) - m_2 g \cdot \sin(\theta_2) - b \omega_2
-\end{pmatrix}
+\begin{pmatrix} (m_1 + m_2) l_1 & m_2 l_2 \cdot \cos(\theta_1 - \theta_2) \\ m_2 l_1 \cdot \cos(\theta_1 - \theta_2) & m_2 l_2 \end{pmatrix} \cdot \begin{pmatrix} \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = \begin{pmatrix} -m_2 l_2 \omega_2^2 \cdot \sin(\theta_1 - \theta_2) - (m_1 + m_2) g \cdot \sin(\theta_1) - b \omega_1 \\ m_2 l_1 \omega_1^2 \cdot \sin(\theta_1 - \theta_2) - m_2 g \cdot \sin(\theta_2) - b \omega_2 \end{pmatrix}
 $$
 
 $$
- A \cdot
- \begin{pmatrix}
-\ddot{\theta}_1 \\
-\ddot{\theta}_2
-\end{pmatrix}
-= C \iff
-\begin{pmatrix}
-\ddot{\theta}_1 \\
-\ddot{\theta}_2
-\end{pmatrix}
-= A^{-1} \cdot C
+A \cdot \begin{pmatrix} \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = C \iff \begin{pmatrix} \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = A^{-1} \cdot C
 $$
 
 With this we can use the Runge-Kutta method of 4th order for numeric integration.
