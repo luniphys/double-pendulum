@@ -1,10 +1,11 @@
 ﻿using double_pendulum.Services;
 using double_pendulum.Views;
+using double_pendulum.Views.Controls;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Numerics;
 using System.Windows.Threading;
 
 namespace double_pendulum
@@ -16,10 +17,96 @@ namespace double_pendulum
         PendulumRenderer renderer;
         DispatcherTimer timer;
 
+        bool isRunnning = false;
+
         public MainWindow()
         {
             InitializeComponent();
         }
+
+        private PendulumParameters BuildParameters()
+        {
+            return new PendulumParameters(
+                (float)SliderL1.QuantityValue,
+                (float)SliderL2.QuantityValue,
+                (float)SliderM1.QuantityValue,
+                (float)SliderM2.QuantityValue,
+                (float)SliderA1.QuantityValue,
+                (float)SliderA2.QuantityValue,
+                (float)SliderD.QuantityValue);
+        }
+        
+        private void PendulumCanvas_Loaded(object sender, RoutedEventArgs e)
+        {
+            renderer = new PendulumRenderer(PendulumCanvas);
+
+            List<QuantitySlider> sliders = new List<QuantitySlider> { SliderL1, SliderL2, SliderM1, SliderM2, SliderA1, SliderA2, SliderD };
+            var descriptor = DependencyPropertyDescriptor.FromProperty(
+                Views.Controls.QuantitySlider.QuantityValueProperty,
+                typeof(Views.Controls.QuantitySlider));
+
+            foreach (QuantitySlider slider in sliders)
+            {
+                descriptor.AddValueChanged(slider, (s, args) => { if (!isRunnning) DrawPreview(); }); // use lambda function for inline method
+            }
+
+            UpdateButtonStates();
+            DrawPreview();
+        }
+
+        // Draw previewPendulum if window size is changed
+        private void PendulumCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (!isRunnning) { DrawPreview(); }
+        }
+        
+        // Draws a preview of the double pendulum with initial slider values
+        private void DrawPreview()
+        {
+            if (renderer == null) { return; }
+
+            renderer.UpdateRadii(SliderM1.QuantityValue, SliderM2.QuantityValue);
+
+            PendulumParameters parameters = BuildParameters();
+            PendulumPhysics previewPendulum = new PendulumPhysics(parameters);
+            renderer.Draw(previewPendulum.GetPosition());
+        }
+
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            isRunnning = true;
+            UpdateButtonStates();
+            pendulum = new PendulumPhysics(BuildParameters());
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(1);
+            timer.Tick += Timer_Tick;
+            timer.Start();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            pendulum.Step();
+            renderer.Draw(pendulum.GetPosition());
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            isRunnning = false;
+            UpdateButtonStates();
+
+            timer?.Stop();
+            DrawPreview();
+        }
+
+        private void UpdateButtonStates()
+        {
+            StartButton.IsEnabled = !isRunnning;
+            ResetButton.IsEnabled = isRunnning;
+        }
+
+
 
         // Check if clicked element is not a textbox, update values and clear focus
         private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -47,51 +134,6 @@ namespace double_pendulum
                 element = VisualTreeHelper.GetParent(element);
             }
             return false;
-        }
-
-        private void StartButton_Click(object sender, RoutedEventArgs e)
-        {
-            PendulumParameters parameters = new PendulumParameters(
-                (float)SliderL1.QuantityValue,
-                (float)SliderL2.QuantityValue,
-                (float)SliderM1.QuantityValue,
-                (float)SliderM2.QuantityValue,
-                (float)SliderA1.QuantityValue,
-                (float)SliderA2.QuantityValue,
-                (float)SliderD.QuantityValue
-                );
-
-            pendulum = new PendulumPhysics(parameters);
-            renderer = new PendulumRenderer(PendulumCanvas);
-
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(5);
-            timer.Tick += Timer_Tick;
-            timer.Start();
-        }
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            pendulum.Step();
-            renderer.Draw(pendulum.GetPosition());
-        }
-
-        private void ResetButton_Click(object sender, RoutedEventArgs e)
-        {
-            timer?.Stop();
-            renderer.Hide();
-
-            PendulumParameters parameters = new PendulumParameters(
-                (float)SliderL1.QuantityValue,
-                (float)SliderL2.QuantityValue,
-                (float)SliderM1.QuantityValue,
-                (float)SliderM2.QuantityValue,
-                (float)SliderA1.QuantityValue,
-                (float)SliderA2.QuantityValue,
-                (float)SliderD.QuantityValue
-                );
-
-            pendulum = new PendulumPhysics(parameters);
         }
     }
 }

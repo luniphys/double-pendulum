@@ -36,6 +36,9 @@
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="border" Property="Opacity" Value="0.6"/>
                             </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.3"/>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -73,11 +76,11 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Button Margin="30,20,15,20" Background="Red" Content="Reset" Click="ResetButton_Click"/>
-                <Button Grid.Column="1" Margin="15,20,30,20" Background="Green" Content="Start" Click="StartButton_Click"/>
+                <Button x:Name="ResetButton" Margin="30,20,15,20" Background="Red" Content="Reset" Click="ResetButton_Click" IsEnabled="False"/>
+                <Button Grid.Column="1" x:Name="StartButton" Margin="15,20,30,20" Background="Green" Content="Start" Click="StartButton_Click"/>
             </Grid>
             <Grid Grid.Row="1">
-                <Canvas x:Name="PendulumCanvas" Background="Transparent"/>
+                <Canvas x:Name="PendulumCanvas" Background="Transparent" Loaded="PendulumCanvas_Loaded" SizeChanged="PendulumCanvas_SizeChanged"/>
             </Grid>
         </Grid>
 
