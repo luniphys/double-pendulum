@@ -65,7 +65,7 @@ namespace double_pendulum
             renderer = new PendulumRenderer(PendulumCanvas);
 
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(10);
+            timer.Interval = TimeSpan.FromMilliseconds(5);
             timer.Tick += Timer_Tick;
             timer.Start();
         }
@@ -73,13 +73,13 @@ namespace double_pendulum
         private void Timer_Tick(object sender, EventArgs e)
         {
             pendulum.Step();
-            renderer.Draw(pendulum.GetPosition(), new Vector2(0, 0));
+            renderer.Draw(pendulum.GetPosition());
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
             timer?.Stop();
-            renderer.ClearCanvas();
+            renderer.Hide();
 
             PendulumParameters parameters = new PendulumParameters(
                 (float)SliderL1.QuantityValue,
@@ -92,9 +92,6 @@ namespace double_pendulum
                 );
 
             pendulum = new PendulumPhysics(parameters);
-            renderer = new PendulumRenderer(PendulumCanvas);
-
-            renderer.Draw(pendulum.GetPosition(), new Vector2(0, 0));
         }
     }
 }

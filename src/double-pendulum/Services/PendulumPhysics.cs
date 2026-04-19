@@ -1,4 +1,6 @@
 ﻿using System.Numerics;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace double_pendulum.Services;
 
@@ -11,7 +13,7 @@ public class PendulumPhysics
 	const float gravity = 9.81f;
 	float stepSize = 0.01f;
 
-	Vector2 state;
+	Vector4 state;
 	
     PendulumParameters parameters;
 
@@ -21,52 +23,60 @@ public class PendulumPhysics
 		state = Initialization();
     }
 
-	Vector2 Initialization()
+	Vector4 Initialization()
 	{
         float startingAngle1 = parameters.Angle1;
+        float startingAngle2 = parameters.Angle2;
         float startingAngularVelocity1 = 0.0f;
-        Vector2 initialState = new Vector2(startingAngle1, startingAngularVelocity1);
+        float startingAngularVelocity2 = 0.0f;
+        Vector4 initialState = new Vector4(startingAngle1, startingAngle2, startingAngularVelocity1, startingAngularVelocity2);
 
         return initialState;
     }
 
-	public void Step()
+	Vector4 DEQ(Vector4 vector)
 	{
-		state = RK4(state);
-    }
+		float angle1 = vector.X;
+		float angle2 = vector.Y;
+		float angularVelocity1 = vector.Z;
+		float angularVelocity2 = vector.W;
 
-    public Vector2 GetPosition()
-	{
-		Vector2 euklidPosition = PolarToEuklid(state);
+		Matrix<double> Mat = DenseMatrix.OfArray(new double[,] { { (parameters.Mass1 + parameters.Mass2) * parameters.Length1, parameters.Mass2 * parameters.Length2 * Math.Cos(angle1 - angle2) },
+																 { parameters.Mass2 * parameters.Length1 * Math.Cos(angle1 - angle2), parameters.Mass2 * parameters.Length2 } });
 
-		return euklidPosition;
-	}
+		MathNet.Numerics.LinearAlgebra.Vector<double> Vec = DenseVector.OfArray(new double[] {  -parameters.Mass2 * parameters.Length2 * Math.Pow(angularVelocity2,2) * Math.Sin(angle1 - angle2) - (parameters.Mass1 + parameters.Mass2) * gravity * Math.Sin(angle1) - parameters.Damp * angularVelocity1,
+																								parameters.Mass2 * parameters.Length1 * Math.Pow(angularVelocity1,2) * Math.Sin(angle1 - angle2) - parameters.Mass2 * gravity * Math.Sin(angle2) - parameters.Damp * angularVelocity2});
 
-	Vector2 DEQ(Vector2 vector)
-	{
-		float angle = vector.X;
-		float angularVelocity = vector.Y;
+		Matrix<double> MatInverse = Mat.Inverse();
+		MathNet.Numerics.LinearAlgebra.Vector<double> ResultVec = MatInverse * Vec;
 
-		float angularAcceleration = (float)(-gravity / parameters.Length1 * Math.Sin(angle) - parameters.Damp / (parameters.Mass1 + Math.Pow(parameters.Length1, 2)) * angularVelocity);
+		float angularAcceleration1 = (float)ResultVec[0];
+        float angularAcceleration2 = (float)ResultVec[1];
 
-        Vector2 vectorDerivative = new Vector2(angularVelocity, angularAcceleration);
+        Vector4 vectorDerivative = new Vector4(angularVelocity1, angularVelocity2, angularAcceleration1, angularAcceleration2);
 
 		return vectorDerivative;
 	}
 
-	Vector2 RK4(Vector2 stateOld)
+	Vector4 RK4(Vector4 stateOld)
 	{
-        Vector2 k0 = DEQ(stateOld);
-        Vector2 k1 = DEQ(stateOld + (stepSize * 0.5f) * k0);
-        Vector2 k2 = DEQ(stateOld + (stepSize * 0.5f) * k1);
-        Vector2 k3 = DEQ(stateOld + stepSize * k2);
+        Vector4 k0 = DEQ(stateOld);
+        Vector4 k1 = DEQ(stateOld + (stepSize * 0.5f) * k0);
+        Vector4 k2 = DEQ(stateOld + (stepSize * 0.5f) * k1);
+        Vector4 k3 = DEQ(stateOld + stepSize * k2);
 
-		Vector2 stateNew = stateOld + stepSize / 6f * (k0 + 2f * k1 + 2f * k2 + k3);
+		Vector4 stateNew = stateOld + stepSize / 6f * (k0 + 2f * k1 + 2f * k2 + k3);
 
 		return stateNew;
     }
 
-	float X1(float angle1)
+    public void Step()
+    {
+        state = RK4(state);
+    }
+
+
+    float X1(float angle1)
 	{
 		return (float)(parameters.Length1 * Math.Sin(angle1));
 	}
@@ -77,22 +87,33 @@ public class PendulumPhysics
 
 	float X2(float angle1, float angle2)
 	{
-        return (float)(parameters.Length1 * Math.Sin(angle1) + parameters.Length2 + Math.Sin(angle2));
+        return (float)(parameters.Length1 * Math.Sin(angle1) + parameters.Length2 * Math.Sin(angle2));
     }
     float Y2(float angle1, float angle2)
     {
-        return (float)(-parameters.Length1 * Math.Cos(angle1) - parameters.Length2 + Math.Cos(angle2));
+        return (float)(-parameters.Length1 * Math.Cos(angle1) - parameters.Length2 * Math.Cos(angle2));
     }
 
-	Vector2 PolarToEuklid(Vector2 vector)
+	Vector4 PolarToEuklid(Vector4 vector)
 	{
-		float angle = vector.X;
+		float angle1 = vector.X;
+        float angle2 = vector.Y;
 
-		float xPosition = X1(angle);
-		float yPosition = Y1(angle);
+        float x1Position = X1(angle1);
+		float y1Position = Y1(angle1);
 
-		Vector2 euklidPosition = new Vector2(xPosition, yPosition);
+        float x2Position = X2(angle1, angle2);
+        float y2Position = Y2(angle1, angle2);
+
+        Vector4 euklidPosition = new Vector4(x1Position, y1Position, x2Position, y2Position);
 
 		return euklidPosition;
 	}
+
+    public Vector4 GetPosition()
+    {
+        Vector4 euklidPosition = PolarToEuklid(state);
+
+        return euklidPosition;
+    }
 }

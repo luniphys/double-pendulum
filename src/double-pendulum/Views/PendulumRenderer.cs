@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -12,6 +13,8 @@ namespace double_pendulum.Views;
 public class PendulumRenderer
 {
     Canvas canvas;
+    Ellipse hangingPoint;
+
     Line line1;
     Line line2;
     Ellipse ellipse1;
@@ -25,15 +28,22 @@ public class PendulumRenderer
         line2 = new Line { Stroke = Brushes.White, StrokeThickness = 3 };
         ellipse1 = new Ellipse { Width = 20, Height = 20, Fill = Brushes.White };
         ellipse2 = new Ellipse { Width = 20, Height = 20, Fill = Brushes.White };
+        hangingPoint = new Ellipse { Width = 10, Height = 10, Fill = Brushes.Gray };
 
         canvas.Children.Add(line1);
         canvas.Children.Add(line2);
+        canvas.Children.Add(hangingPoint);
         canvas.Children.Add(ellipse1);
         canvas.Children.Add(ellipse2);
     }
 
-    public void Draw(Vector2 position1, Vector2 position2)
+    public void Draw(Vector4 position)
     {
+        SetVisibility(Visibility.Visible);
+
+        Vector2 position1 = new Vector2(position.X, position.Y);
+        Vector2 position2 = new Vector2(position.Z, position.W);
+
         double hangingPointX = canvas.ActualWidth / 2;
         double hangingPointY = canvas.ActualHeight / 8;
 
@@ -47,13 +57,16 @@ public class PendulumRenderer
         line1.X2 = ellipse1X;
         line1.Y2 = ellipse1Y;
 
-        double ellipse2X = ellipse1X + 1;
-        double ellipse2Y = ellipse1X + 1;
+        double ellipse2X = hangingPointX + position2.X * scale;
+        double ellipse2Y = hangingPointY - position2.Y * scale;
 
         line2.X1 = ellipse1X;
         line2.Y1 = ellipse1Y;
         line2.X2 = ellipse2X;
         line2.Y2 = ellipse2Y;
+
+        Canvas.SetLeft(hangingPoint, hangingPointX - hangingPoint.Width / 2);
+        Canvas.SetTop(hangingPoint, hangingPointY - hangingPoint.Height / 2);
 
         Canvas.SetLeft(ellipse1, ellipse1X - ellipse1.Width / 2);
         Canvas.SetTop(ellipse1, ellipse1Y - ellipse1.Height / 2);
@@ -61,9 +74,16 @@ public class PendulumRenderer
         Canvas.SetTop(ellipse2, ellipse2Y - ellipse2.Height / 2);
     }
 
-    public void ClearCanvas()
+    private void SetVisibility(Visibility visibility)
     {
-        canvas.Children.Clear();
+        line1.Visibility = visibility;
+        line2.Visibility = visibility;
+        ellipse1.Visibility = visibility;
+        ellipse2.Visibility = visibility;
+    }
+    public void Hide()
+    {
+        SetVisibility(Visibility.Hidden);
     }
 }
 

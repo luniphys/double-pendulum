@@ -69,7 +69,7 @@
         <Slider Name="Sliding"  Grid.Column="1" VerticalAlignment="Center" Margin="10,0,10,0"
                 Style="{StaticResource QuantitySliderStyle}" Value="{Binding QuantityValue, RelativeSource={RelativeSource AncestorType=UserControl}}"
                 Minimum="{Binding MinSliderValue, RelativeSource={RelativeSource AncestorType=UserControl}}" Maximum="{Binding MaxSliderValue, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                IsSnapToTickEnabled="True" TickFrequency="1"/>
+                IsSnapToTickEnabled="True" TickFrequency="{Binding TickFrequency, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
         <TextBox Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"
                  Background="#FF1e1e1e" Foreground="White" BorderThickness="0"
                  FontSize="20" FontWeight="Bold" Text="{Binding QuantityValue, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat=F0}"

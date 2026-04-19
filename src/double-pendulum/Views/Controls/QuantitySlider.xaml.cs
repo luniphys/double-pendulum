@@ -72,6 +72,18 @@ namespace double_pendulum.Views.Controls
                 typeof(QuantitySlider));
 
 
+        public double TickFrequency
+        {
+            get { return (double)GetValue(TickFrequencyProperty); }
+            set { SetValue(TickFrequencyProperty, value); }
+        }
+        public static readonly DependencyProperty TickFrequencyProperty =
+            DependencyProperty.Register(
+                nameof(TickFrequency),
+                typeof(double),
+                typeof(QuantitySlider));
+
+
         public QuantitySlider()
         {
             InitializeComponent();
