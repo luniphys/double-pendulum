@@ -17,9 +17,11 @@ m_2 l_2 \ddot{\theta}_2 + m_2 l_1 \ddot{\theta}_1 \cdot \cos(\theta_1 - \theta_2
 $$
 
 With the state vector defined as:
+
 $$
 \vec{y} = (\theta_1, \theta_2, \omega_1, \omega_2)^T
 $$
+
 we can transform the above into a 1 dimensional system:
 
 $$
