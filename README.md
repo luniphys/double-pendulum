@@ -6,8 +6,40 @@
 
 ## Mathematics
 
-Starting we have the equations of motion for both angles $\theta_1$, $\theta_2$:
+Starting we have the two equations of motion for both angles $\theta_1$, $\theta_2$:
 
 $$
-(m_1 + m_2)
+(m_1 + m_2) l_1 \ddot{\theta}_1 + m_2 l_2 \ddot{\theta}_2 \cdot \cos(\theta_1 - \theta_2) + m_2 l_2 \dot{\theta}_2^2 \cdot \sin(\theta_1 - \theta_2) + (m_1 + m_2) g \cdot \sin(\theta_1) + b \dot{\theta}_1 = 0
 $$
+
+$$
+m_2 l_2 \ddot{\theta}_2 + m_2 l_1 \ddot{\theta}_1 \cdot \cos(\theta_1 - \theta_2) - m_2 l_1 \dot{\theta}_1^2 \cdot \sin(\theta_1 - \theta_2) + m_2 g \cdot \sin(\theta_2) + b \dot{\theta}_2 = 0
+$$
+
+With the vector $\vec{y} = (\theta_1, \theta_2, \omega_1, \omega_2)^T$ we can transform the above into a 1 dimensional system:
+
+$$
+\dot{\vec{y}} = \begin{pmatrix} \dot{\theta}_1 \\ \dot{\theta}_2 \\ \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = \begin{pmatrix} \omega_1 \\ \omega_2 \\ * \\ * \end{pmatrix} = \vec{f}(\theta_1, \theta_2, \omega_1, \omega_2)
+$$
+
+To get the right hand side expressions for $(\ddot{\theta}_1, \ddot{\theta}_2)$ we need to solve the linear system:
+
+$$
+\begin{pmatrix} (m_1 + m_2) l_1 & m_2 l_2 \cdot \cos(\theta_1 - \theta_2) \\ m_2 l_1 \cdot \cos(\theta_1 - \theta_2) & m_2 l_2 \end{pmatrix} \cdot \begin{pmatrix} \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = \begin{pmatrix} -m_2 l_2 \omega_2^2 \cdot \sin(\theta_1 - \theta_2) - (m_1 + m_2) g \cdot \sin(\theta_1) - b \omega_1 \\ m_2 l_1 \omega_1^2 \cdot \sin(\theta_1 - \theta_2) - m_2 g \cdot \sin(\theta_2) - b \omega_2 \end{pmatrix}
+$$
+
+$$
+ A \cdot \begin{pmatrix} \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = C \iff \begin{pmatrix} \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = A^{-1} \cdot C
+$$
+
+With this we can use the Runge-Kutta method of 4th order for numeric integration.
+
+$$
+\vec{y}_{i+1} = \vec{y}_i + \frac{h}{6} \cdot \left(\vec{\kappa_0} + 2 \vec{\kappa_1} + 2 \vec{\kappa_2} + \vec{\kappa_3} \right)
+$$
+
+$$
+\vec{\kappa}_0 = \vec{f} \left(\vec{y}_i \right), \; \; \; \vec{\kappa}_1 = \vec{f} \left(\vec{y}_i + \frac{h}{2} \cdot \vec{\kappa}_0 \right), \; \; \; \vec{\kappa}_2 = \vec{f} \left(\vec{y}_i + \frac{h}{2} \cdot \vec{\kappa}_1 \right), \; \; \; \vec{\kappa}_3 = \vec{f} \left(\vec{y}_i + h \cdot \vec{\kappa}_2 \right)
+$$
+
+With $h$ being the step size between time stamp $t_i$ and $t_{i+1}$.
