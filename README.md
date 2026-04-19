@@ -1,4 +1,4 @@
-[![.github/workflows/ci.yml](https://github.com/luniphys/double-pendulum/actions/workflows/ci.yml/badge.svg)](https://github.com/luniphys/double-pendulum/actions/workflows/ci.yml)
+﻿[![.github/workflows/ci.yml](https://github.com/luniphys/double-pendulum/actions/workflows/ci.yml/badge.svg)](https://github.com/luniphys/double-pendulum/actions/workflows/ci.yml)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -25,20 +25,20 @@ $$
 we can transform the above into a 1 dimensional system:
 
 $$
-\dot{\vec{y}} = 
-\begin{pmatrix} 
-\dot{\theta}_1 \\ 
-\dot{\theta}_2 \\ 
-\ddot{\theta}_1 \\ 
-\ddot{\theta}_2 
-\end{pmatrix} 
-= 
-\begin{pmatrix} 
-\omega_1 \\ 
-\omega_2 \\ 
-g_1(\theta_1, \theta_2, \omega_1, \omega_2) \\ 
-g_2(\theta_1, \theta_2, \omega_1, \omega_2) 
-\end{pmatrix} 
+\dot{\vec{y}} =
+\begin{pmatrix}
+\dot{\theta}_1 \\
+\dot{\theta}_2 \\
+\ddot{\theta}_1 \\
+\ddot{\theta}_2
+\end{pmatrix}
+=
+\begin{pmatrix}
+\omega_1 \\
+\omega_2 \\
+g_1(\theta_1, \theta_2, \omega_1, \omega_2) \\
+g_2(\theta_1, \theta_2, \omega_1, \omega_2)
+\end{pmatrix}
 = \vec{f}(\theta_1, \theta_2, \omega_1, \omega_2)
 $$
 
