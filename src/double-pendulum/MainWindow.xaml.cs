@@ -65,6 +65,9 @@ namespace double_pendulum
         {
             if (renderer == null) { return; }
 
+            if (ColorCheckBox.IsChecked == true) { renderer.ChangeColor(0, 0, 255, 0, 0, 255); }
+            else { renderer.ChangeColor(255, 255, 255, 255, 255, 255); }
+
             renderer.UpdateRadii(SliderM1.QuantityValue, SliderM2.QuantityValue);
 
             PendulumParameters parameters = BuildParameters();
@@ -89,6 +92,23 @@ namespace double_pendulum
         {
             pendulum.Step();
             renderer.Draw(pendulum.GetPosition());
+            
+            if (ColorCheckBox.IsChecked ==  true)
+            {
+                const double maxAngularVelocity = 10.0;
+
+                double angularVelocity1 = Math.Min(Math.Abs(pendulum.state.Z), maxAngularVelocity);
+                byte red1 = (byte)(angularVelocity1 / maxAngularVelocity * 255);
+
+                double angularVelocity2 = Math.Min(Math.Abs(pendulum.state.W), maxAngularVelocity);
+                byte red2 = (byte)(angularVelocity2 / maxAngularVelocity * 255);
+
+                renderer.ChangeColor(red1, 0, (byte)(255 - red1), red2, 0, (byte)(255 - red2));
+            }
+            else
+            {
+                renderer.ChangeColor(255, 255, 255, 255, 255, 255);
+            }
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
@@ -100,12 +120,19 @@ namespace double_pendulum
             DrawPreview();
         }
 
+
+        // Switches button states of exclusive button group: Start, Reset
         private void UpdateButtonStates()
         {
             StartButton.IsEnabled = !isRunnning;
             ResetButton.IsEnabled = isRunnning;
         }
 
+        // Makes color changes while pendulum at rest possible
+        private void ColorCheckBox_Changed(object sender, RoutedEventArgs e)
+        {
+            if (!isRunnning) { DrawPreview(); }
+        }
 
 
         // Check if clicked element is not a textbox, update values and clear focus

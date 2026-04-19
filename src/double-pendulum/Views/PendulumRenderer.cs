@@ -20,19 +20,17 @@ public class PendulumRenderer
     Ellipse ellipse1;
     Ellipse ellipse2;
 
-    const double MinRadius = 8;
-    const double MaxRadius = 30;
-    const double MinMass = 1;
-    const double MaxMass = 50;
+    SolidColorBrush brush1 = new SolidColorBrush(Colors.White);
+    SolidColorBrush brush2 = new SolidColorBrush(Colors.White);
 
     public PendulumRenderer(Canvas canvas)
     {
         this.canvas = canvas;
 
-        line1 = new Line {Stroke = Brushes.White, StrokeThickness = 3};
+        line1 = new Line { Stroke = Brushes.White, StrokeThickness = 3};
         line2 = new Line { Stroke = Brushes.White, StrokeThickness = 3 };
-        ellipse1 = new Ellipse { Fill = Brushes.White };
-        ellipse2 = new Ellipse { Fill = Brushes.White };
+        ellipse1 = new Ellipse { Fill = brush1 };
+        ellipse2 = new Ellipse { Fill = brush2 };
         hangingPoint = new Ellipse { Width = 10, Height = 10, Fill = Brushes.Gray };
 
         canvas.Children.Add(line1);
@@ -42,19 +40,6 @@ public class PendulumRenderer
         canvas.Children.Add(ellipse2);
     }
 
-    private double MassToRadius(double mass)
-    {
-        double temp = (Math.Sqrt(mass) - Math.Sqrt(MinMass)) / (Math.Sqrt(MaxMass) - Math.Sqrt(MinMass));
-        return MinRadius + temp * (MaxRadius - MinRadius);
-    }
-
-    public void UpdateRadii(double mass1, double mass2)
-    {
-        ellipse1.Width = MassToRadius(mass1);
-        ellipse1.Height = MassToRadius(mass1);
-        ellipse2.Width = MassToRadius(mass2);
-        ellipse2.Height = MassToRadius(mass2);
-    }
 
     public void Draw(Vector4 position)
     {
@@ -64,7 +49,7 @@ public class PendulumRenderer
         Vector2 position2 = new Vector2(position.Z, position.W);
 
         double hangingPointX = canvas.ActualWidth / 2;
-        double hangingPointY = canvas.ActualHeight / 8;
+        double hangingPointY = canvas.ActualHeight / 4;
 
         double scale = 100;
 
@@ -93,6 +78,7 @@ public class PendulumRenderer
         Canvas.SetTop(ellipse2, ellipse2Y - ellipse2.Height / 2);
     }
 
+
     private void SetVisibility(Visibility visibility)
     {
         line1.Visibility = visibility;
@@ -104,6 +90,36 @@ public class PendulumRenderer
     public void Hide()
     {
         SetVisibility(Visibility.Hidden);
+    }
+
+
+    private double MassToRadius(double mass)
+    {
+        const double MinRadius = 8;
+        const double MaxRadius = 30;
+        const double MinMass = 1;
+        const double MaxMass = 50;
+
+        double temp = (Math.Sqrt(mass) - Math.Sqrt(MinMass)) / (Math.Sqrt(MaxMass) - Math.Sqrt(MinMass));
+        return MinRadius + temp * (MaxRadius - MinRadius);
+    }
+    public void UpdateRadii(double mass1, double mass2)
+    {
+        ellipse1.Width = MassToRadius(mass1);
+        ellipse1.Height = MassToRadius(mass1);
+        ellipse2.Width = MassToRadius(mass2);
+        ellipse2.Height = MassToRadius(mass2);
+    }
+
+
+    public void ChangeColor(byte r1, byte g1, byte b1, byte r2, byte g2, byte b2)
+    {
+        brush1.Color = Color.FromRgb(r1, g1, b1);
+        brush2.Color = Color.FromRgb(r2, g2, b2);
+    }
+    public void DrawTail()
+    {
+
     }
 }
 

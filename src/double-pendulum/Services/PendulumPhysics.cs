@@ -13,7 +13,7 @@ public class PendulumPhysics
 	const float gravity = 9.81f;
 	float stepSize = 0.01f;
 
-	Vector4 state;
+	public Vector4 state;
 	
     PendulumParameters parameters;
 
