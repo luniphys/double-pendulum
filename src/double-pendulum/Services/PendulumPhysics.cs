@@ -23,9 +23,9 @@ public class PendulumPhysics
 
 	Vector2 Initialization()
 	{
-        float startingAngle = parameters.Angle1;
-        float startingAngularVelocity = 0.0f;
-        Vector2 initialState = new Vector2(startingAngle, startingAngularVelocity);
+        float startingAngle1 = parameters.Angle1;
+        float startingAngularVelocity1 = 0.0f;
+        Vector2 initialState = new Vector2(startingAngle1, startingAngularVelocity1);
 
         return initialState;
     }
@@ -47,7 +47,7 @@ public class PendulumPhysics
 		float angle = vector.X;
 		float angularVelocity = vector.Y;
 
-		float angularAcceleration = (float)(-gravity / parameters.Length1 * Math.Sin(angle) - parameters.Damp * angularVelocity);
+		float angularAcceleration = (float)(-gravity / parameters.Length1 * Math.Sin(angle) - parameters.Damp / (parameters.Mass1 + Math.Pow(parameters.Length1, 2)) * angularVelocity);
 
         Vector2 vectorDerivative = new Vector2(angularVelocity, angularAcceleration);
 
