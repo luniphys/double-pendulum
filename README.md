@@ -17,11 +17,9 @@ m_2 l_2 \ddot{\theta}_2 + m_2 l_1 \ddot{\theta}_1 \cdot \cos(\theta_1 - \theta_2
 $$
 
 With the state vector defined as
-
 ```math
-\vec{y} = (\theta_1, \theta_2, \omega_1, \omega_2)^T$
+$\vec{y} = (\theta_1, \theta_2, \omega_1, \omega_2)^T$
 ```
-
 we can transform the above into a 1 dimensional system:
 
 ```math
@@ -29,6 +27,8 @@ $$
 \dot{\vec{y}} = \begin{pmatrix} \dot{\theta}_1 \\ \dot{\theta}_2 \\ \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = \begin{pmatrix} \omega_1 \\ \omega_2 \\ g_1(\theta_1, \theta_2, \omega_1, \omega_2) \\ g_2(\theta_1, \theta_2, \omega_1, \omega_2) \end{pmatrix} = \vec{f}(\theta_1, \theta_2, \omega_1, \omega_2)
 $$
 ```
+
+<br />
 
 To get expressions for $(\ddot{\theta}_1, \ddot{\theta}_2)$ we need to solve the linear system:
 
@@ -43,6 +43,8 @@ $$
 A \cdot \begin{pmatrix} \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = C \iff \begin{pmatrix} \ddot{\theta}_1 \\ \ddot{\theta}_2 \end{pmatrix} = A^{-1} \cdot C
 $$
 ```
+
+<br />
 
 With this we can use the Runge-Kutta method of 4th order for numeric integration.
 
