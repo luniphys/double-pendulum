@@ -16,11 +16,7 @@ $$
 m_2 l_2 \ddot{\theta}_2 + m_2 l_1 \ddot{\theta}_1 \cdot \cos(\theta_1 - \theta_2) - m_2 l_1 \dot{\theta}_1^2 \cdot \sin(\theta_1 - \theta_2) + m_2 g \cdot \sin(\theta_2) + b \dot{\theta}_2 = 0
 $$
 
-With the state vector defined as
-```math
-$\vec{y} = (\theta_1, \theta_2, \omega_1, \omega_2)^T$
-```
-we can transform the above into a 1 dimensional system:
+With the state vector defined as $\vec{y} = (\theta_1, \theta_2, \omega_1, \omega_2)^T$ we can transform the above into a 1 dimensional system:
 
 ```math
 $$
