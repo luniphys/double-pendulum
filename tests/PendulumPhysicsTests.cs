@@ -9,11 +9,11 @@ public class PendulumPhysicsTests
     [Fact]
     public void Initialization_Test()
     {
-        var parameters = new PendulumParameters { Angle1 = 1.0f, Angle2 = 0.5f };
+        PendulumParameters parameters = new PendulumParameters(1.0f, 1.0f, 1.0f, 1.0f, 45.0f, 90.0f, 5.0f);
 
-        var physics = new PendulumPhysics(parameters);
+        PendulumPhysics physics = new PendulumPhysics(parameters);
 
-        Assert.Equal(1.0f, physics.state.X);
-        Assert.Equal(0.5f, physics.state.Y);
+        Assert.Equal(45.0f, physics.state.X);
+        Assert.Equal(90.0f, physics.state.Y);
     }
 }
