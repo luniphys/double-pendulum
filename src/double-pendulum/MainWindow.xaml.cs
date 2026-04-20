@@ -39,6 +39,7 @@ namespace double_pendulum
         private void PendulumCanvas_Loaded(object sender, RoutedEventArgs e)
         {
             renderer = new PendulumRenderer(PendulumCanvas);
+            renderer.SetTrailLength((int)(TrailDuration.QuantityValue * 100));
 
             List<QuantitySlider> sliders = new List<QuantitySlider> { SliderL1, SliderL2, SliderM1, SliderM2, SliderA1, SliderA2, SliderD };
             var descriptor = DependencyPropertyDescriptor.FromProperty(
@@ -49,6 +50,8 @@ namespace double_pendulum
             {
                 descriptor.AddValueChanged(slider, (s, args) => { if (!isRunnning) DrawPreview(); }); // use lambda function for inline method
             }
+
+            descriptor.AddValueChanged(TrailDuration, (s, args) => { renderer.SetTrailLength((int)(TrailDuration.QuantityValue * 100)); });
 
             UpdateButtonStates();
             DrawPreview();
@@ -118,6 +121,8 @@ namespace double_pendulum
 
             timer?.Stop();
             DrawPreview();
+
+            renderer.EraseTrail();
         }
 
 

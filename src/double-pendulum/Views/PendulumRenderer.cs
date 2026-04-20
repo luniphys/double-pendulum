@@ -7,7 +7,7 @@ using System.Windows.Shapes;
 namespace double_pendulum.Views;
 
 /// <summary>
-/// Draws the lines (rods) and ellipses (bobs) on the canvas each frame.
+/// Draws the lines (rods) and ellipses (bobs) plus a trail path on the canvas each frame.
 /// </summary>
 
 public class PendulumRenderer
@@ -20,18 +20,32 @@ public class PendulumRenderer
     Ellipse ellipse1;
     Ellipse ellipse2;
 
+    private double hangingPointX;
+    private double hangingPointY;
+
+    private double scale = 100;
+
     SolidColorBrush brush1 = new SolidColorBrush(Colors.White);
     SolidColorBrush brush2 = new SolidColorBrush(Colors.White);
+
+    int MaxTrailLength;
+
+    Queue<(Point point, Color color)> pastPointsQueue;
+    List<Line> segmentPool;
+
 
     public PendulumRenderer(Canvas canvas)
     {
         this.canvas = canvas;
 
-        line1 = new Line { Stroke = Brushes.White, StrokeThickness = 3};
-        line2 = new Line { Stroke = Brushes.White, StrokeThickness = 3 };
-        ellipse1 = new Ellipse { Fill = brush1 };
-        ellipse2 = new Ellipse { Fill = brush2 };
-        hangingPoint = new Ellipse { Width = 10, Height = 10, Fill = Brushes.Gray };
+        line1 = new Line { Stroke = brush1, StrokeThickness = 3 };
+        line2 = new Line { Stroke = brush2, StrokeThickness = 3 };
+        ellipse1 = new Ellipse { Fill = brush1, Stroke = Brushes.Black, StrokeThickness = 1.5 };
+        ellipse2 = new Ellipse { Fill = brush2, Stroke = Brushes.Black, StrokeThickness = 1.5 };
+        hangingPoint = new Ellipse { Width = 10, Height = 10, Fill = Brushes.DarkGray, Stroke = Brushes.Black, StrokeThickness = 1.5 };
+
+        pastPointsQueue = new Queue<(Point, Color)>();
+        segmentPool = new List<Line>();
 
         canvas.Children.Add(line1);
         canvas.Children.Add(line2);
@@ -43,15 +57,17 @@ public class PendulumRenderer
 
     public void Draw(Vector4 position)
     {
-        SetVisibility(Visibility.Visible);
+        line1.Visibility = Visibility.Visible;
+        line2.Visibility = Visibility.Visible;
+        ellipse1.Visibility = Visibility.Visible;
+        ellipse2.Visibility = Visibility.Visible;
+        hangingPoint.Visibility = Visibility.Visible;
 
         Vector2 position1 = new Vector2(position.X, position.Y);
         Vector2 position2 = new Vector2(position.Z, position.W);
 
-        double hangingPointX = canvas.ActualWidth / 2;
-        double hangingPointY = canvas.ActualHeight / 4;
-
-        double scale = 100;
+        hangingPointX = canvas.ActualWidth / 2;
+        hangingPointY = canvas.ActualHeight / 4;
 
         double ellipse1X = hangingPointX + position1.X * scale;
         double ellipse1Y = hangingPointY - position1.Y * scale;
@@ -76,22 +92,72 @@ public class PendulumRenderer
         Canvas.SetTop(ellipse1, ellipse1Y - ellipse1.Height / 2);
         Canvas.SetLeft(ellipse2, ellipse2X - ellipse2.Width / 2);
         Canvas.SetTop(ellipse2, ellipse2Y - ellipse2.Height / 2);
+
+        DrawTrail(position2, brush2.Color);
     }
 
-
-    private void SetVisibility(Visibility visibility)
+    public void DrawTrail(Vector2 position, Color color)
     {
-        line1.Visibility = visibility;
-        line2.Visibility = visibility;
-        ellipse1.Visibility = visibility;
-        ellipse2.Visibility = visibility;
-        hangingPoint.Visibility = visibility;
-    }
-    public void Hide()
-    {
-        SetVisibility(Visibility.Hidden);
+        double screenX = hangingPointX + position.X * scale;
+        double screenY = hangingPointY - position.Y * scale;
+
+        pastPointsQueue.Enqueue((new Point(screenX, screenY), color));
+
+        if (pastPointsQueue.Count > MaxTrailLength)
+        {
+            pastPointsQueue.Dequeue();
+        }
+
+        var points = pastPointsQueue.ToArray();
+        int segmentCount = points.Length - 1;
+
+        for (int i = 0; i < segmentCount; i++)
+        {
+            segmentPool[i].X1 = points[i].point.X;
+            segmentPool[i].Y1 = points[i].point.Y;
+            segmentPool[i].X2 = points[i + 1].point.X;
+            segmentPool[i].Y2 = points[i + 1].point.Y;
+            segmentPool[i].StrokeThickness = ellipse2.Width / 2;
+            segmentPool[i].Opacity = (double)(i + 1) / segmentCount;
+            ((SolidColorBrush)segmentPool[i].Stroke).Color = points[i].color;
+            segmentPool[i].Visibility = Visibility.Visible;
+        }
+
+        for (int i = segmentCount; i < MaxTrailLength - 1; i++)
+        {
+            segmentPool[i].Visibility = Visibility.Hidden;
+        }
     }
 
+    public void EraseTrail()
+    {
+        pastPointsQueue.Clear();
+        for (int i = 0; i < MaxTrailLength - 1; i++)
+        {
+            segmentPool[i].Visibility = Visibility.Hidden;
+        }
+    }
+
+    public void SetTrailLength(int length)
+    {
+        int newLength = Math.Max(2, length); // To keep at least 1 segment
+
+        if (newLength == MaxTrailLength) { return; }
+
+        MaxTrailLength = newLength;
+
+        while (segmentPool.Count < MaxTrailLength - 1)
+        {
+            Line seg = new Line { StrokeThickness = 2, StrokeLineJoin = PenLineJoin.Round, Visibility = Visibility.Hidden, Stroke = new SolidColorBrush(Colors.White) };
+            canvas.Children.Insert(canvas.Children.IndexOf(line1), seg);
+            segmentPool.Add(seg);
+        }
+
+        while (pastPointsQueue.Count > MaxTrailLength)
+        {
+            pastPointsQueue.Dequeue();
+        }
+    }
 
     private double MassToRadius(double mass)
     {
@@ -116,10 +182,6 @@ public class PendulumRenderer
     {
         brush1.Color = Color.FromRgb(r1, g1, b1);
         brush2.Color = Color.FromRgb(r2, g2, b2);
-    }
-    public void DrawTail()
-    {
-
     }
 }
 
