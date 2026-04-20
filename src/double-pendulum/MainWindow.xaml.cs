@@ -13,9 +13,9 @@ namespace double_pendulum
     public partial class MainWindow : Window
 
     {
-        PendulumPhysics pendulum;
-        PendulumRenderer renderer;
-        DispatcherTimer timer;
+        PendulumPhysics pendulum = null!;
+        PendulumRenderer renderer = null!;
+        DispatcherTimer timer = null!;
 
         bool isRunnning = false;
 
@@ -91,7 +91,7 @@ namespace double_pendulum
             timer.Start();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private void Timer_Tick(object? sender, EventArgs e)
         {
             pendulum.Step();
             renderer.Draw(pendulum.GetPosition());
