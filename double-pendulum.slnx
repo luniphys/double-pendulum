@@ -2,4 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/double-pendulum/double-pendulum.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/double-pendulum.Tests.csproj" />
+  </Folder>
 </Solution>
