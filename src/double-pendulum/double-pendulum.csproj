@@ -10,7 +10,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\dp-icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\dp-icon.ico" />
   </ItemGroup>
 
 </Project>
