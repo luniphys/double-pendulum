@@ -4,6 +4,10 @@
 
 # Double Pendulum
 
+<p align="center">
+    <img src="docs/images/example_image.png" width="800" alt="GUI">
+</p>
+
 ## Mathematics
 
 Starting we have the two equations of motion for both angles $\theta_1$, $\theta_2$:
