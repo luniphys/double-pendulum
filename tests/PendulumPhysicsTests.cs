@@ -6,6 +6,7 @@ namespace double_pendulum.Tests;
 /// <summary>
 /// Contains xUnit tests for the PendulumPhysics, to ensure correctness of pendulum state initialization,
 /// differential equations, Runge-Kutta integration, simulation step updates and correct coordinate transformation via example with randomly choosen values.
+/// Also trivial physical properties are tested.
 /// </summary>
 
 public class PendulumPhysicsTests
@@ -42,8 +43,12 @@ public class PendulumPhysicsTests
         physics.state = state; // Needed to push the modified Z,W values into physics
     }
 
+    #region Testing one explicit case
 
-    [Fact] // xUnit-Testframework Attribut. Markiert Methode als Unit Test ohne Parameter.
+    /// <summary>
+    /// Verifies that the initial state is correctly set with the transferred angles and zeroed angular velocities.
+    /// </summary>
+    [Fact]
     public void Initialization_Test()
     {
         float expectedAngle1 = (float)(angle1 * (float)Math.PI / 180.0f);
@@ -55,6 +60,9 @@ public class PendulumPhysicsTests
         Assert.Equal(0.0f, initialState.W);
     }
 
+    /// <summary>
+    /// Verifies that the differential equation (DEQ) method returns the expected angular accelerations and transferred velocities.
+    /// </summary>
     [Fact]
     public void DEQ_Test()
     {
@@ -69,6 +77,9 @@ public class PendulumPhysicsTests
         Assert.Equal(expectedAngularAcceleration2, stateDEQ.W, precision: 5);
     }
 
+    /// <summary>
+    /// Verifies that the Runge-Kutta method produces the expected followed state for the given initial state.
+    /// </summary>
     [Fact]
     public void RK4_Test()
     {
@@ -85,6 +96,9 @@ public class PendulumPhysicsTests
         Assert.Equal(expectedAngularVelocity2, stateRK4.W, precision: 5);
     }
 
+    /// <summary>
+    /// Verifies that the Step method updates the physics state directly to the expected values.
+    /// </summary>
     [Fact]
     public void Step_Test()
     {
@@ -101,11 +115,12 @@ public class PendulumPhysicsTests
         Assert.Equal(expectedAngularVelocity2, physics.state.W, precision: 5);
     }
 
+    /// <summary>
+    /// Verifies that the PolarToEuklid method correctly converts a polar coordinate state to its Euclidean/Cartesian representation.
+    /// </summary>
     [Fact]
     public void PolarToEuklid_Test()
     {
-        Vector4 euklidCoordinates = physics.PolarToEuklid(state);
-
         float expectedX1 = 1.2942305f;
         float expectedY1 = 0.12234091f;
         float expectedX2 = 0.08225376f;
@@ -119,6 +134,9 @@ public class PendulumPhysicsTests
         Assert.Equal(expectedY2, euklidState[3], precision: 5);
     }
 
+    /// <summary>
+    /// Verifies that the GetPosition method returns the correct position values.
+    /// </summary>
     [Fact]
     public void GetPosition_Test()
     {
@@ -134,4 +152,99 @@ public class PendulumPhysicsTests
         Assert.Equal(expectedX2, positionState[2], precision: 5);
         Assert.Equal(expectedY2, positionState[3], precision: 5);
     }
+
+    #endregion
+
+
+    #region Specific physical cases
+
+    /// <summary>
+    /// Verifies that the pendulum initialized at rest stays at rest after multiple simulation steps.
+    /// </summary>
+    [Fact]
+    public void RestingAtZero_Test()
+    {
+        PendulumParameters zeroParams = new PendulumParameters(1.0f, 1.0f, 10.0f, 10.0f, 0.0f, 0.0f, 0.0f);
+        PendulumPhysics zeroPhysics = new PendulumPhysics(zeroParams);
+
+        Vector4 initialState = zeroPhysics.RK4(zeroPhysics.state);
+
+        for (int i = 0; i < 100; i++)
+        {
+            zeroPhysics.Step();
+        }
+
+        Vector4 finalState = zeroPhysics.RK4(zeroPhysics.state);
+
+        Assert.Equal(initialState[0], finalState[0], precision: 5);
+        Assert.Equal(initialState[1], finalState[1], precision: 5);
+        Assert.Equal(initialState[2], finalState[2], precision: 5);
+        Assert.Equal(initialState[3], finalState[3], precision: 5);
+    }
+
+    /// <summary>
+    /// Verifies that the calculated Cartesian positions match the expected values for various inital states.
+    /// </summary>
+    [Theory]
+    [InlineData(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, -2.0f)] // Resting at Zero
+    [InlineData(1.0f, 1.0f, 90.0f, 0.0f, 1.0f, 0.0f, 1.0f, -1.0f)] // 90 degrees
+    [InlineData(1.0f, 1.0f, 180.0f, 180.0f, 0.0f, 1.0f, 0.0f, 2.0f)] // Straight up
+    public void VariousPositions_Test(
+        float length1, float length2, float angle1, float angle2,
+        float expectedX1, float expectedY1, float expectedX2, float expectedY2)
+    {
+        PendulumParameters posParams = new PendulumParameters(length1, length2, 10.0f, 10.0f, angle1, angle2, 0.0f);
+        PendulumPhysics posPhysics = new PendulumPhysics(posParams);
+
+        Vector4 position = posPhysics.PolarToEuklid(posPhysics.state);
+
+        Assert.Equal(expectedX1, position.X, precision: 5);
+        Assert.Equal(expectedY1, position.Y, precision: 5);
+        Assert.Equal(expectedX2, position.Z, precision: 5);
+        Assert.Equal(expectedY2, position.W, precision: 5);
+    }
+
+    /// <summary>
+    /// Verifies that total energy is conserved without damping and not conserved with damping.
+    /// </summary>
+    [Fact]
+    public void EnergyConservation_Test()
+    {
+        PendulumParameters noDampParams = new PendulumParameters(1.0f, 1.0f, 10.0f, 10.0f, 60.0f, 45.0f, 0.0f);
+        PendulumPhysics noDampPhysics = new PendulumPhysics(noDampParams);
+
+        PendulumParameters dampParams = new PendulumParameters(1.0f, 1.0f, 10.0f, 10.0f, 60.0f, 45.0f, 10.0f);
+        PendulumPhysics dampPhysics = new PendulumPhysics(dampParams);
+
+        float TotalEnergy(Vector4 vec, float L1, float L2, float M1, float M2)
+        {
+            const float g = 9.81f;
+
+            float T = (float)(0.5f * (M1 + M2) * Math.Pow(L1, 2) * Math.Pow(vec.Z, 2) +
+                      0.5f * M2 * Math.Pow(L2, 2) * Math.Pow(vec.W, 2) +
+                      M2 * L1 * L2 * vec.Z * vec.W * Math.Cos(vec.X - vec.Y));
+            float V = (float)(-(M1 + M2) * g * L1 * Math.Cos(vec.X)
+                      - M2 * g * L2 * Math.Cos(vec.Y));
+
+            return T + V;
+
+        }
+
+        float initialNoDamp = TotalEnergy(noDampPhysics.state, noDampParams.Length1 , noDampParams.Length2 , noDampParams.Mass1 , noDampParams.Mass2);
+        float initialDamp = TotalEnergy(dampPhysics.state, dampParams.Length1, dampParams.Length2, dampParams.Mass1, dampParams.Mass2);
+
+        for (int i = 0; i < 100; i++)
+        {
+            noDampPhysics.Step();
+            dampPhysics.Step();
+        }
+
+        float finalNoDamp = TotalEnergy(noDampPhysics.state, noDampParams.Length1, noDampParams.Length2, noDampParams.Mass1, noDampParams.Mass2);
+        float finalDamp = TotalEnergy(dampPhysics.state, dampParams.Length1, dampParams.Length2, dampParams.Mass1, dampParams.Mass2);
+
+        Assert.Equal(initialNoDamp, finalNoDamp, precision: 2); // (RK4 not the best at keeping energy conservation -> Low precision)
+        Assert.NotEqual(initialDamp, finalDamp, precision: 2);
+    }
+
+    #endregion
 }

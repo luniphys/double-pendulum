@@ -7,31 +7,54 @@ on:
       - master
   pull_request:
 
+defaults:
+  run:
+    shell: pwsh
+
 jobs:
   lint:
+    name: Lint
     runs-on: windows-latest
     steps:
-        - uses: actions/checkout@v4
-        - name: Setup .NET
-          uses: actions/setup-dotnet@v4
-          with:
-            dotnet-version: '10.x'
-        - name: Restore dependencies
-          run: dotnet restore
-        - name: Check build (lint)
-          run: dotnet build --no-restore --no-incremental /warnaserror
-    
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Check build (lint)
+        run: dotnet build --no-restore --no-incremental /warnaserror
+
   test:
+    name: Test
     runs-on: windows-latest
+    needs: lint
     steps:
-        - uses: actions/checkout@v4
-        - name: Setup .NET
-          uses: actions/setup-dotnet@v4
-          with:
-            dotnet-version: '10.x'
-        - name: Restore dependencies
-          run: dotnet restore
-        - name: Build
-          run: dotnet build --no-restore
-        - name: Run tests
-          run: dotnet test --no-build --verbosity normal
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: "**/*.trx"
