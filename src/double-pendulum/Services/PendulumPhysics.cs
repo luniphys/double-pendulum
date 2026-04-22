@@ -34,7 +34,7 @@ public class PendulumPhysics
         return initialState;
     }
 
-	Vector4 DEQ(Vector4 vector)
+	public Vector4 DEQ(Vector4 vector)
 	{
 		float angle1 = vector.X;
 		float angle2 = vector.Y;
@@ -58,7 +58,7 @@ public class PendulumPhysics
 		return vectorDerivative;
 	}
 
-	Vector4 RK4(Vector4 stateOld)
+	public Vector4 RK4(Vector4 stateOld)
 	{
         Vector4 k0 = DEQ(stateOld);
         Vector4 k1 = DEQ(stateOld + (stepSize * 0.5f) * k0);
@@ -94,7 +94,7 @@ public class PendulumPhysics
         return (float)(-parameters.Length1 * Math.Cos(angle1) - parameters.Length2 * Math.Cos(angle2));
     }
 
-	Vector4 PolarToEuklid(Vector4 vector)
+	public Vector4 PolarToEuklid(Vector4 vector)
 	{
 		float angle1 = vector.X;
         float angle2 = vector.Y;
