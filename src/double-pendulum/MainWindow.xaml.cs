@@ -100,10 +100,10 @@ namespace double_pendulum
             {
                 const double maxAngularVelocity = 10.0;
 
-                double angularVelocity1 = Math.Min(Math.Abs(pendulum.state.Z), maxAngularVelocity);
+                double angularVelocity1 = Math.Min(Math.Abs(pendulum.State.Z), maxAngularVelocity);
                 byte red1 = (byte)(angularVelocity1 / maxAngularVelocity * 255);
 
-                double angularVelocity2 = Math.Min(Math.Abs(pendulum.state.W), maxAngularVelocity);
+                double angularVelocity2 = Math.Min(Math.Abs(pendulum.State.W), maxAngularVelocity);
                 byte red2 = (byte)(angularVelocity2 / maxAngularVelocity * 255);
 
                 renderer.ChangeColor(red1, 0, (byte)(255 - red1), red2, 0, (byte)(255 - red2));

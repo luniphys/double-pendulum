@@ -5,6 +5,7 @@ namespace double_pendulum.Services;
 /// Values are read-only after construction.
 /// </summary>
 
+// Improvement: Use "record" instead of class for read-only classes.
 public class PendulumParameters
 {
     public float Length1 { get; }
@@ -15,14 +16,16 @@ public class PendulumParameters
     public float Angle2 { get; }
     public float Damp { get; }
 
-    public PendulumParameters(float Length1, float Length2, float Mass1, float Mass2, float Angle1, float Angle2, float Damp)
+    private const float DegreesToRadians = (float)(MathF.PI / 180.0f);
+
+    public PendulumParameters(float length1, float length2, float mass1, float mass2, float angle1, float angle2, float damp)
     {
-        this.Length1 = Length1;
-        this.Length2 = Length2;
-        this.Mass1 = Mass1;
-        this.Mass2 = Mass2;
-        this.Angle1 = Angle1 * (float)Math.PI / 180.0f; // Conversion degrees -> radiants
-        this.Angle2 = Angle2 * (float)Math.PI / 180.0f;
-        this.Damp = Damp;
+        this.Length1 = length1;
+        this.Length2 = length2;
+        this.Mass1 = mass1;
+        this.Mass2 = mass2;
+        this.Angle1 = angle1 * DegreesToRadians; // Conversion degrees -> radiants
+        this.Angle2 = angle2 * DegreesToRadians;
+        this.Damp = damp;
     }
 }
