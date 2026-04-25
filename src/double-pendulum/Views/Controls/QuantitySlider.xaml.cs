@@ -1,10 +1,12 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Input;
+using System.Windows.Data;
 
 namespace double_pendulum.Views.Controls
 {
-    public partial class QuantitySlider : UserControl
+    public partial class QuantitySlider : UserControl // partial makes class available for and xaml this cs file. UserControl provides a lot of UI dependent code functionality
     {
         public Brush SliderColor
         {
@@ -48,6 +50,17 @@ namespace double_pendulum.Views.Controls
                     CoerceQuantityValue));
 
 
+        public string QuantityUnit
+        {
+            get { return (string)GetValue(QuantityUnitProperty); }
+            set { SetValue(QuantityUnitProperty, value); }
+        }
+        public static readonly DependencyProperty QuantityUnitProperty =
+            DependencyProperty.Register(nameof(QuantityUnit),
+                typeof(string),
+                typeof(QuantitySlider));
+
+
         public double MinSliderValue
         {
             get { return (double)GetValue(MinSliderValueProperty); }
@@ -84,6 +97,7 @@ namespace double_pendulum.Views.Controls
                 typeof(QuantitySlider));
 
 
+
         public QuantitySlider()
         {
             InitializeComponent();
@@ -91,14 +105,14 @@ namespace double_pendulum.Views.Controls
 
         private static object CoerceQuantityValue(DependencyObject d, object baseValue)
         {
-            var control = (QuantitySlider)d;
+            QuantitySlider control = (QuantitySlider)d;
             double value = (double)baseValue;
             double min = control.MinSliderValue;
             double max = control.MaxSliderValue;
 
             if (min > max)
             {
-                var tmp = min;
+                double tmp = min;
                 min = max;
                 max = tmp;
             }
@@ -107,14 +121,21 @@ namespace double_pendulum.Views.Controls
             return value;
         }
 
-        private void TextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void TextBox_KeyDown(object sender, KeyEventArgs e) // object is generic type for all UI elements "sender" (here: TextBox)
         {
-            if (e.Key == System.Windows.Input.Key.Enter)
+            TextBox textBox = (TextBox)sender; // Casting object->TextBox
+            BindingExpression binding = textBox.GetBindingExpression(TextBox.TextProperty);
+
+            if (e.Key == Key.Enter)
             {
-                var textBox = (TextBox)sender;
-                var binding = textBox.GetBindingExpression(TextBox.TextProperty);
-                binding?.UpdateSource();
-                Sliding.Focus();
+                binding?.UpdateSource(); // pushes the typed value to the binding source
+                Sliding.Focus(); // Moves focus to slider
+
+            }
+            if (e.Key == Key.Escape)
+            {
+                binding?.UpdateTarget(); // pulls the original source value back, discarding edits
+                Sliding.Focus(); // Moves focus to slider
             }
         }
     }

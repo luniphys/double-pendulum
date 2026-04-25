@@ -61,10 +61,10 @@
                 <RowDefinition Height="10*"/>
                 <RowDefinition Height="60*"/>
             </Grid.RowDefinitions>
-            <controls:QuantitySlider Grid.Row="0" x:Name="SliderL1" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₁" MinSliderValue="1" MaxSliderValue="5" QuantityValue="2" TickFrequency="0.5"/>
-            <controls:QuantitySlider Grid.Row="1" x:Name="SliderL2" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₂" MinSliderValue="1" MaxSliderValue="5" QuantityValue="1" TickFrequency="0.5"/>
-            <controls:QuantitySlider Grid.Row="2" x:Name="SliderM1" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₁" MinSliderValue="1" MaxSliderValue="50" QuantityValue="10" TickFrequency="1"/>
-            <controls:QuantitySlider Grid.Row="3" x:Name="SliderM2" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₂" MinSliderValue="1" MaxSliderValue="50" QuantityValue="10" TickFrequency="1"/>
+            <controls:QuantitySlider Grid.Row="0" x:Name="SliderL1" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₁" MinSliderValue="0.5" MaxSliderValue="4" QuantityValue="2" QuantityUnit="m" TickFrequency="0.5"/>
+            <controls:QuantitySlider Grid.Row="1" x:Name="SliderL2" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₂" MinSliderValue="0.5" MaxSliderValue="4" QuantityValue="1" QuantityUnit="m" TickFrequency="0.5"/>
+            <controls:QuantitySlider Grid.Row="2" x:Name="SliderM1" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₁" MinSliderValue="1" MaxSliderValue="500" QuantityValue="10" QuantityUnit="kg" TickFrequency="1"/>
+            <controls:QuantitySlider Grid.Row="3" x:Name="SliderM2" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₂" MinSliderValue="1" MaxSliderValue="500" QuantityValue="10" QuantityUnit="kg" TickFrequency="1"/>
         </Grid>
 
         <Grid Grid.Column="1">
@@ -94,16 +94,16 @@
                 <RowDefinition Height="10*"/>
                 <RowDefinition Height="10*"/>
             </Grid.RowDefinitions>
-            <controls:QuantitySlider Grid.Row="0" x:Name="SliderD" Margin="0,0,10,0" SliderColor="#d62f4b" Quantity="D" MinSliderValue="0" MaxSliderValue="50" QuantityValue="1" TickFrequency="1"/>
-            <controls:QuantitySlider Grid.Row="1" x:Name="SliderA1" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₁" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="110" TickFrequency="5"/>
-            <controls:QuantitySlider Grid.Row="2" x:Name="SliderA2" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₂" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="130" TickFrequency="5"/>
+            <controls:QuantitySlider Grid.Row="0" x:Name="SliderD" Margin="0,0,10,0" SliderColor="#d62f4b" Quantity="D" MinSliderValue="0" MaxSliderValue="100" QuantityValue="1" QuantityUnit="" TickFrequency="1"/>
+            <controls:QuantitySlider Grid.Row="1" x:Name="SliderA1" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₁" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="110" QuantityUnit="°" TickFrequency="1"/>
+            <controls:QuantitySlider Grid.Row="2" x:Name="SliderA2" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₂" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="130" QuantityUnit="°" TickFrequency="1"/>
 
             <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,5">
                 <CheckBox VerticalAlignment="Center" x:Name="ColorCheckBox" IsChecked="true" Checked="ColorCheckBox_Changed" Unchecked="ColorCheckBox_Changed"/>
                 <TextBlock VerticalAlignment="Center" Text="Show Colors" Foreground="White" FontSize="20" FontWeight="Bold" Margin="8,0,0,1"/>
             </StackPanel>
 
-            <controls:QuantitySlider Grid.Row="5" x:Name="TrailDuration" SliderColor="Purple" Quantity="Trail Length" MinSliderValue="0" MaxSliderValue="10" QuantityValue="3" TickFrequency="1"/>
+            <controls:QuantitySlider Grid.Row="5" x:Name="TrailDuration" SliderColor="Purple" Quantity="Trail Length" MinSliderValue="0" MaxSliderValue="10" QuantityValue="3" QuantityUnit="" TickFrequency="1"/>
 
         </Grid>
 

@@ -169,3 +169,8 @@ namespace double_pendulum
         }
     }
 }
+
+// TODO: Only numbers allowed in QuantitySlider TextBox.
+// TODO: Adjust QuantitySlider TextBlock for relevant decimal places
+// TODO: Fit the pendulum inside Window
+// TODO: No trail when adjusting sliders

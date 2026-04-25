@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:double_pendulum.Views.Controls"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="100" d:DesignWidth="800">
     <UserControl.Resources>
         <Style x:Key="QuantitySliderStyle" TargetType="Slider">
@@ -12,25 +12,21 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Slider">
                         <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <!-- Track (Rail) -->
-                            <Border Grid.Row="1" Height="4" Background="#555555" CornerRadius="2"
+                            <!-- Track (Rail). Consisting of 3 parts: [=======DecreaseRepeatButton=======][Thumb][==IncreaseRepeatButton==] -->
+                            <Border Height="4" Background="#555555" CornerRadius="2"
                                     VerticalAlignment="Center" Margin="5,0"/>
-                            <Track Grid.Row="1" x:Name="PART_Track">
+                            <Track x:Name="PART_Track">
+                                <!-- Filled portion of the track -->
                                 <Track.DecreaseRepeatButton>
                                     <RepeatButton Command="Slider.DecreaseLarge" Style="{x:Null}">
                                         <RepeatButton.Template>
                                             <ControlTemplate TargetType="RepeatButton">
-                                                <!-- Filled portion of the rail -->
                                                 <Border Height="4" Background="{Binding SliderColor, RelativeSource={RelativeSource AncestorType=UserControl}}" CornerRadius="2"/>
                                             </ControlTemplate>
                                         </RepeatButton.Template>
                                     </RepeatButton>
                                 </Track.DecreaseRepeatButton>
+                                <!-- Empty portion of the track -->
                                 <Track.IncreaseRepeatButton>
                                     <RepeatButton Command="Slider.IncreaseLarge" Style="{x:Null}">
                                         <RepeatButton.Template>
@@ -40,12 +36,12 @@
                                         </RepeatButton.Template>
                                     </RepeatButton>
                                 </Track.IncreaseRepeatButton>
+                                <!-- Pointer (Thumb) -->
                                 <Track.Thumb>
                                     <Thumb>
                                         <Thumb.Template>
                                             <ControlTemplate TargetType="Thumb">
-                                                <!-- Pointer (Thumb) -->
-                                                <Ellipse Width="16" Height="16" Fill="WhiteSmoke"/>
+                                                <Ellipse Width="16" Height="16" Fill="White"/>
                                             </ControlTemplate>
                                         </Thumb.Template>
                                     </Thumb>
@@ -63,16 +59,25 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                   Background="#FF1e1e1e" Foreground="White"
-                   FontSize="20" FontWeight="Bold" Text="{Binding Quantity, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-        <Slider Name="Sliding"  Grid.Column="1" VerticalAlignment="Center" Margin="10,0,10,0"
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Background="Transparent" Foreground="White"
+                   FontSize="20" FontWeight="Bold" Text="{Binding Quantity, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                   d:Text="Q₁"/>
+        <Slider Grid.Column="1" Name="Sliding" VerticalAlignment="Center" Margin="10,0,5,0"
                 Style="{StaticResource QuantitySliderStyle}" Value="{Binding QuantityValue, RelativeSource={RelativeSource AncestorType=UserControl}}"
                 Minimum="{Binding MinSliderValue, RelativeSource={RelativeSource AncestorType=UserControl}}" Maximum="{Binding MaxSliderValue, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                IsSnapToTickEnabled="True" TickFrequency="{Binding TickFrequency, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-        <TextBox Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="45"
-                 Background="#FF1e1e1e" Foreground="White" BorderThickness="0"
-                 FontSize="20" FontWeight="Bold" Text="{Binding QuantityValue, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat=F0}"
-                 KeyDown="TextBox_KeyDown"/>
+                IsSnapToTickEnabled="True" TickFrequency="{Binding TickFrequency, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                d:Minimum="1" d:Maximum="50" d:Value="10"/>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left" Width="65">
+            <TextBox HorizontalAlignment="Right" VerticalAlignment="Center"
+                     Background="Transparent" Foreground="White" TextAlignment="Right" CaretBrush="White" BorderThickness="0"
+                     FontSize="20" FontWeight="Bold" Text="{Binding QuantityValue, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat=F0}"
+                     KeyDown="TextBox_KeyDown"
+                     d:Text="145"/>
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                     Background="Transparent" Foreground="White" TextAlignment="Left"
+                     FontSize="20" FontWeight="Bold" Text="{Binding QuantityUnit, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                     d:Text="°"/>
+        </StackPanel>
     </Grid>
 </UserControl>
