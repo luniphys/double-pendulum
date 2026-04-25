@@ -68,6 +68,8 @@ namespace double_pendulum
         {
             if (renderer == null) { return; }
 
+            renderer.EraseTrail();
+
             if (ColorCheckBox.IsChecked == true) { renderer.ChangeColor(0, 0, 255, 0, 0, 255); }
             else { renderer.ChangeColor(255, 255, 255, 255, 255, 255); }
 
@@ -170,7 +172,6 @@ namespace double_pendulum
     }
 }
 
-// TODO: Only numbers allowed in QuantitySlider TextBox.
-// TODO: Adjust QuantitySlider TextBlock for relevant decimal places
 // TODO: Fit the pendulum inside Window
-// TODO: No trail when adjusting sliders
+// TODO: When adjusting trail length during runnig, sometimes a trail path gets stuck on screen
+// TODO: Adjust initial slider values
