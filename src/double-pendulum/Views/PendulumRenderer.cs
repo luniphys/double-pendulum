@@ -55,7 +55,7 @@ public class PendulumRenderer
     }
 
 
-    public void Draw(Vector4 position)
+    public void Draw(Vector4 position, bool recordTrail = true)
     {
         line1.Visibility = Visibility.Visible;
         line2.Visibility = Visibility.Visible;
@@ -93,39 +93,49 @@ public class PendulumRenderer
         Canvas.SetLeft(ellipse2, ellipse2X - ellipse2.Width / 2);
         Canvas.SetTop(ellipse2, ellipse2Y - ellipse2.Height / 2);
 
-        DrawTrail(position2, brush2.Color);
+        DrawTrail(position2, brush2.Color, recordTrail);
     }
 
-    public void DrawTrail(Vector2 position, Color color)
+    public void DrawTrail(Vector2 position, Color color, bool recordTrail = true)
     {
         double screenX = hangingPointX + position.X * scale;
         double screenY = hangingPointY - position.Y * scale;
 
-        pastPointsQueue.Enqueue((new Point(screenX, screenY), color));
-
-        if (pastPointsQueue.Count > MaxTrailLength)
+        if (recordTrail)
         {
-            pastPointsQueue.Dequeue();
+            pastPointsQueue.Enqueue((new Point(screenX, screenY), color));
+
+            if (pastPointsQueue.Count > MaxTrailLength)
+            {
+                pastPointsQueue.Dequeue();
+            }
         }
 
-        var points = pastPointsQueue.ToArray();
-        int segmentCount = points.Length - 1;
+        int segmentCount = Math.Max(0, pastPointsQueue.Count - 1);
+        int i = 0;
 
-        for (int i = 0; i < segmentCount; i++)
+        (Point point, Color color) prev = default;
+        foreach (var current in pastPointsQueue)
         {
-            segmentPool[i].X1 = points[i].point.X;
-            segmentPool[i].Y1 = points[i].point.Y;
-            segmentPool[i].X2 = points[i + 1].point.X;
-            segmentPool[i].Y2 = points[i + 1].point.Y;
-            segmentPool[i].StrokeThickness = ellipse2.Width / 2;
-            segmentPool[i].Opacity = (double)(i + 1) / segmentCount;
-            ((SolidColorBrush)segmentPool[i].Stroke).Color = points[i].color;
-            segmentPool[i].Visibility = Visibility.Visible;
+            if (i > 0)
+            {
+                int si = i - 1;
+                segmentPool[si].X1 = prev.point.X;
+                segmentPool[si].Y1 = prev.point.Y;
+                segmentPool[si].X2 = current.point.X;
+                segmentPool[si].Y2 = current.point.Y;
+                segmentPool[si].StrokeThickness = ellipse2.Width / 2;
+                segmentPool[si].Opacity = (double)i / segmentCount;
+                ((SolidColorBrush)segmentPool[si].Stroke).Color = prev.color;
+                segmentPool[si].Visibility = Visibility.Visible;
+            }
+            prev = current;
+            i++;
         }
 
-        for (int i = segmentCount; i < MaxTrailLength - 1; i++)
+        for (int j = segmentCount; j < MaxTrailLength - 1; j++)
         {
-            segmentPool[i].Visibility = Visibility.Hidden;
+            segmentPool[j].Visibility = Visibility.Hidden;
         }
     }
 

@@ -16,9 +16,11 @@ namespace double_pendulum
     {
         PendulumPhysics pendulum = null!;
         PendulumRenderer renderer = null!;
-        DispatcherTimer timer = null!;
 
         bool isRunnning = false;
+
+        double _stepAccumulator = 0.0;
+        TimeSpan _lastRenderTime = TimeSpan.Zero;
 
 
         public MainWindow()
@@ -102,34 +104,54 @@ namespace double_pendulum
 
 
         /// <summary>
-        /// Handles clicking the Start button to initialize and start the pendulum simulation via DispatchTimer
-        /// that calls Timer_Tick every 1 ms.
+        /// Handles clicking the Start button to initialize and start the pendulum simulation via Rendering.
         /// </summary>
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             isRunnning = true;
+            _stepAccumulator = 0;
+            _lastRenderTime = TimeSpan.MinValue;
             UpdateButtonStates();
 
             PendulumParameters parameters = BuildParameters();
             pendulum = new PendulumPhysics(parameters);
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(1);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            CompositionTarget.Rendering += OnRendering;
         }
 
 
         /// <summary>
-        /// Timer tick event to advance pendulum simulation and redraw its state.
+        /// Fires at every frame (synced to GPU) to advance pendulum simulation and redraw its state depending on a given speed.
         /// </summary>
         /// <remarks>If the ColorCheckBox is enabled, the pendulum's colors will be based on
         /// their angular velocities. Otherwise, the pendulums are rendered in white.</remarks>
-        private void Timer_Tick(object? sender, EventArgs e)
+        private void OnRendering(object? sender, EventArgs e)
         {
-            pendulum.Step();
-            renderer.Draw(pendulum.GetPosition());
-            
+            var renderArgs = (RenderingEventArgs)e;
+            if (renderArgs.RenderingTime == _lastRenderTime) { return; }
+
+            if (_lastRenderTime == TimeSpan.MinValue)
+            {
+                _lastRenderTime = renderArgs.RenderingTime;
+                return;
+            }
+
+            double elapsedMs = (renderArgs.RenderingTime - _lastRenderTime).TotalMilliseconds;
+            _lastRenderTime = renderArgs.RenderingTime;
+
+            _stepAccumulator += elapsedMs * Speed.QuantityValue * 0.06;
+
+            bool stepped = false;
+            while (_stepAccumulator >= 1.0)
+            {
+                pendulum.Step();
+                _stepAccumulator -= 1.0;
+                stepped = true;
+            }
+
+            renderer.Draw(pendulum.GetPosition(), recordTrail: stepped);
+
+
             if (ColorCheckBox.IsChecked == true)
             {
                 const double maxAngularVelocity = 10.0;
@@ -157,7 +179,7 @@ namespace double_pendulum
             isRunnning = false;
             UpdateButtonStates();
 
-            timer.Stop();
+            CompositionTarget.Rendering -= OnRendering;
             DrawPreview();
 
             renderer.EraseTrail();
@@ -183,30 +205,43 @@ namespace double_pendulum
         }
 
 
-        // Check if clicked element is not a textbox, update values and clear focus
+        /// <summary>
+        /// PreviewMouseDown updates any active TextBox bindings and clears focus when not clicking a TextBox
+        /// </summary>
+        /// <remarks>Ensures that pending changes are committed before focus is lost.</remarks>
         private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.OriginalSource is DependencyObject source && !IsChildOfType<TextBox>(source)) // e.OriginalSource is topmost visual element clicked
+            var topVisualElement = e.OriginalSource;
+
+            if (topVisualElement is DependencyObject)
             {
-                if (Keyboard.FocusedElement is TextBox focusedTextBox)
+                DependencyObject topVisualDO = (DependencyObject)topVisualElement;
+
+                if (!IsChildOfType<TextBox>(topVisualDO))
                 {
-                    BindingExpression binding = focusedTextBox.GetBindingExpression(TextBox.TextProperty);
-                    Console.WriteLine(TextBox.TextProperty);
-                    binding?.UpdateSource();
+                    if (Keyboard.FocusedElement is TextBox)
+                    {
+                        TextBox focusedTextBox = (TextBox)Keyboard.FocusedElement;
+
+                        BindingExpression binding = focusedTextBox.GetBindingExpression(TextBox.TextProperty);
+                        binding?.UpdateSource();
+                    }
+                    Keyboard.ClearFocus();
+                    FocusManager.SetFocusedElement(this, this);
                 }
-                Keyboard.ClearFocus();
-                FocusManager.SetFocusedElement(this, this);
             }
         }
 
 
-        // Walk up visual tree of clicked element to check if it (or any parent) is of type T
+        /// <summary>
+        /// Determines whether an element is a child of a specific type.
+        /// </summary>
+        /// <remarks>Travelling up the visual tree from the initial element and checking each parents' type.</remarks>
         private static bool IsChildOfType<T>(DependencyObject element) where T : DependencyObject
         {
             while (element != null)
             {
-                if (element is T)
-                    return true;
+                if (element is T) { return true; }
                 element = VisualTreeHelper.GetParent(element);
             }
             return false;
@@ -214,6 +249,4 @@ namespace double_pendulum
     }
 }
 
-// TODO: = null! on top?
-// TODO: Install speed slider?
 // TODO: professional code?
