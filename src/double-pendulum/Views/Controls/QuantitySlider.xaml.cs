@@ -4,6 +4,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace double_pendulum.Views.Controls
 {
@@ -74,7 +75,7 @@ namespace double_pendulum.Views.Controls
 
 
         /// <summary>
-        /// Property for maxmial value of a QuantitySlider
+        /// Property for maximal value of a QuantitySlider
         /// </summary>
         public double MaxSliderValue
         {
@@ -106,7 +107,7 @@ namespace double_pendulum.Views.Controls
 
 
         /// <summary>
-        /// Acutal quantity value of a QuantitySlider
+        /// Actual quantity value of a QuantitySlider
         /// </summary>
         public double QuantityValue
         {
@@ -128,7 +129,7 @@ namespace double_pendulum.Views.Controls
         /// <summary>
         /// StringFormat of Quantity values' display
         /// </summary>
-        /// <remarks>Controls how man deciaml places are shown for a value.</remarks>
+        /// <remarks>Controls how man decimal places are shown for a value.</remarks>
         public string ValueStringFormat
         {
             get { return (string)GetValue(ValueStringFormatProperty); }
@@ -163,11 +164,15 @@ namespace double_pendulum.Views.Controls
         {
             QuantitySlider slider = (QuantitySlider)d;
             double value = (double)baseValue;
+
             double min = slider.MinSliderValue;
             double max = slider.MaxSliderValue;
 
+            if (double.IsNaN(value)) { return min; }
+
             if (value < min) { return min; }
             if (value > max) { return max; }
+
             return value;
         }
 
@@ -193,22 +198,25 @@ namespace double_pendulum.Views.Controls
         /// Handles key press events for the QuantityValue TextBox to commit or revert changes based on the pressed key.
         /// </summary>
         /// <remarks>Pressing Enter commits, while pressing Escape reverts the TextBox text to its original value.
-        /// After that, focus is moved to the associated slider control.</remarks>
+        /// After that, focus is moved to the associated slider control. If TextBox is empty, focus stays after pressing Enter.</remarks>
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key != Key.Enter && e.Key != Key.Escape) { return; }
+
             TextBox textBox = (TextBox)sender;
-            BindingExpression binding = textBox.GetBindingExpression(TextBox.TextProperty); 
+            BindingExpression binding = textBox.GetBindingExpression(TextBox.TextProperty);
+
+            if (e.Key == Key.Enter && string.IsNullOrWhiteSpace(textBox.Text)) { return; }
+
             if (e.Key == Key.Enter)
             {
                 binding?.UpdateSource();
-                Sliding.Focus();
-
             }
-            if (e.Key == Key.Escape)
+            else
             {
                 binding?.UpdateTarget();
-                Sliding.Focus();
             }
+            QSlider.Focus();
         }
 
 
@@ -227,6 +235,7 @@ namespace double_pendulum.Views.Controls
         }
 
 
+        private static readonly Regex NumericRegex = new(@"^-?\d*\.?\d*$", RegexOptions.Compiled); 
         /// <summary>
         /// Handler prevents non numerical input in ValueTextBox.
         /// </summary>
@@ -234,7 +243,19 @@ namespace double_pendulum.Views.Controls
         {
             TextBox textBox = (TextBox)sender;
             string resultingText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
-            e.Handled = !Regex.IsMatch(resultingText, @"^-?\d*\.?\d*$");
+            e.Handled = !NumericRegex.IsMatch(resultingText);
+        }
+
+
+        /// <summary>
+        /// Handler prevents whitespaces as input in ValueTextBox.
+        /// </summary>
+        private void ValueTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                e.Handled = true;
+            }
         }
     }
 }

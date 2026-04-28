@@ -10,12 +10,13 @@
         Icon="pack://application:,,,/Assets/dp-icon.ico"
         Title="Double Pendulum" Height="650" Width="1000" MinWidth="600" MinHeight="400"
         Focusable="True" PreviewMouseDown="Window_PreviewMouseDown">
+    <!-- Style for the Reset & Start Buttons -->
     <Window.Resources>
         <Style TargetType="Button">
-            <Setter Property="Foreground" Value="WhiteSmoke"/>
+            <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontSize" Value="20"/>
-            <Setter Property="BorderBrush" Value="WhiteSmoke"/>
+            <Setter Property="BorderBrush" Value="White"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="MinWidth" Value="75"/>
             <Setter Property="MaxWidth" Value="250"/>
@@ -46,6 +47,8 @@
             </Setter>
         </Style>
     </Window.Resources>
+    
+    <!-- 3 Column setup -->
     <Grid Background="#FF1e1e1e">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -53,6 +56,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
+        <!-- Sliders for Lengths and Masses -->
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="10*"/>
@@ -67,6 +71,7 @@
             <controls:QuantitySlider Grid.Row="3" x:Name="SliderM2" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₂" MinSliderValue="1" MaxSliderValue="500" QuantityValue="10" QuantityUnit="kg" TickFrequency="1"/>
         </Grid>
 
+        <!-- Reset and Start Buttons -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20*"/>
@@ -85,6 +90,7 @@
             </Grid>
         </Grid>
 
+        <!-- Sliders for Damping and inital angles -->
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="10*"/>
@@ -98,12 +104,14 @@
             <controls:QuantitySlider Grid.Row="1" x:Name="SliderA1" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₁" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="110" QuantityUnit="°" TickFrequency="1"/>
             <controls:QuantitySlider Grid.Row="2" x:Name="SliderA2" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₂" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="130" QuantityUnit="°" TickFrequency="1"/>
 
-            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,5">
+            <!-- CheckBox to enable/disable colorization -->
+            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <CheckBox VerticalAlignment="Center" x:Name="ColorCheckBox" IsChecked="true" Checked="ColorCheckBox_Changed" Unchecked="ColorCheckBox_Changed"/>
                 <TextBlock VerticalAlignment="Center" Text="Show Colors" Foreground="White" FontSize="20" FontWeight="Bold" Margin="8,0,0,1"/>
             </StackPanel>
 
-            <controls:QuantitySlider Grid.Row="5" x:Name="TrailDuration" SliderColor="Purple" Quantity="Trail Length" MinSliderValue="0" MaxSliderValue="10" QuantityValue="3" QuantityUnit="" TickFrequency="1"/>
+            <!-- Slider for trail length -->
+            <controls:QuantitySlider Grid.Row="5" x:Name="TrailDuration" SliderColor="Purple" Quantity="Trail" MinSliderValue="0" MaxSliderValue="20" QuantityValue="3" QuantityUnit="" TickFrequency="0.5" ValueStringFormat="F1"/>
 
         </Grid>
 

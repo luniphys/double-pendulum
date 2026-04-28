@@ -144,6 +144,14 @@ public class PendulumRenderer
 
         if (newLength == MaxTrailLength) { return; }
 
+        if (newLength < MaxTrailLength)
+        {
+            for (int i = newLength - 1; i < segmentPool.Count; i++)
+            {
+                segmentPool[i].Visibility = Visibility.Hidden;
+            }
+        }
+
         MaxTrailLength = newLength;
 
         while (segmentPool.Count < MaxTrailLength - 1)

@@ -172,6 +172,4 @@ namespace double_pendulum
     }
 }
 
-// TODO: Fit the pendulum inside Window
-// TODO: When adjusting trail length during runnig, sometimes a trail path gets stuck on screen
 // TODO: Adjust initial slider values
