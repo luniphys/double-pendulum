@@ -4,6 +4,7 @@ using double_pendulum.Views.Controls;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -19,11 +20,16 @@ namespace double_pendulum
 
         bool isRunnning = false;
 
+
         public MainWindow()
         {
             InitializeComponent();
         }
 
+
+        /// <summary>
+        /// Create new instance of the PendulumParameters class using the values from the sliders.
+        /// </summary>
         private PendulumParameters BuildParameters()
         {
             return new PendulumParameters(
@@ -36,34 +42,48 @@ namespace double_pendulum
                 (float)SliderD.QuantityValue);
         }
         
+
+        /// <summary>
+        /// Initializing the pendulum renderer and setting up the inital pendulum. Adds functionality that continiously
+        /// ensures redrawing of pendulum once slider values are changed.
+        /// </summary>
         private void PendulumCanvas_Loaded(object sender, RoutedEventArgs e)
         {
             renderer = new PendulumRenderer(PendulumCanvas);
-            renderer.SetTrailLength((int)(TrailDuration.QuantityValue * 100));
+
+            renderer.SetTrailLength((int)(TrailLength.QuantityValue * 100));
+
+            DrawPreview();
+
 
             List<QuantitySlider> sliders = new List<QuantitySlider> { SliderL1, SliderL2, SliderM1, SliderM2, SliderA1, SliderA2, SliderD };
-            var descriptor = DependencyPropertyDescriptor.FromProperty(
+            DependencyPropertyDescriptor descriptor = DependencyPropertyDescriptor.FromProperty(
                 Views.Controls.QuantitySlider.QuantityValueProperty,
-                typeof(Views.Controls.QuantitySlider));
+                typeof(Views.Controls.QuantitySlider)); // WPF helper that listens for changes on QuantityValueProperty of a QuantitySlider
 
             foreach (QuantitySlider slider in sliders)
             {
-                descriptor.AddValueChanged(slider, (s, args) => { if (!isRunnning) DrawPreview(); }); // use lambda function for inline method
+                descriptor.AddValueChanged(slider, (s, args) => { if (!isRunnning) DrawPreview(); });
             }
 
-            descriptor.AddValueChanged(TrailDuration, (s, args) => { renderer.SetTrailLength((int)(TrailDuration.QuantityValue * 100)); });
-
-            UpdateButtonStates();
-            DrawPreview();
+            descriptor.AddValueChanged(TrailLength, (s, args) => { renderer.SetTrailLength((int)(TrailLength.QuantityValue * 100)); });
         }
 
-        // Draw previewPendulum if window size is changed
+
+        /// <summary>
+        /// Handles the SizeChanged event of the canvas to update the pendulum when window size is changed.
+        /// </summary>
         private void PendulumCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (!isRunnning) { DrawPreview(); }
         }
-        
-        // Draws a preview of the double pendulum with initial slider values
+
+
+        /// <summary>
+        /// Draws a preview of the double pendulum with the initial slider values
+        /// </summary>
+        /// <remarks>Ensures blue color (zero velocity) or white depending on ColorCheckBox. Sets radii
+        /// corresponding to pendulums masses.</remarks>
         private void DrawPreview()
         {
             if (renderer == null) { return; }
@@ -81,11 +101,17 @@ namespace double_pendulum
         }
 
 
+        /// <summary>
+        /// Handles clicking the Start button to initialize and start the pendulum simulation via DispatchTimer
+        /// that calls Timer_Tick every 1 ms.
+        /// </summary>
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             isRunnning = true;
             UpdateButtonStates();
-            pendulum = new PendulumPhysics(BuildParameters());
+
+            PendulumParameters parameters = BuildParameters();
+            pendulum = new PendulumPhysics(parameters);
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(1);
@@ -93,12 +119,18 @@ namespace double_pendulum
             timer.Start();
         }
 
+
+        /// <summary>
+        /// Timer tick event to advance pendulum simulation and redraw its state.
+        /// </summary>
+        /// <remarks>If the ColorCheckBox is enabled, the pendulum's colors will be based on
+        /// their angular velocities. Otherwise, the pendulums are rendered in white.</remarks>
         private void Timer_Tick(object? sender, EventArgs e)
         {
             pendulum.Step();
             renderer.Draw(pendulum.GetPosition());
             
-            if (ColorCheckBox.IsChecked ==  true)
+            if (ColorCheckBox.IsChecked == true)
             {
                 const double maxAngularVelocity = 10.0;
 
@@ -116,26 +148,35 @@ namespace double_pendulum
             }
         }
 
+
+        /// <summary>
+        /// Handles Click event of Reset button by stopping the timer, resetting the UI to preview, and clearing the trail.
+        /// </summary>
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
             isRunnning = false;
             UpdateButtonStates();
 
-            timer?.Stop();
+            timer.Stop();
             DrawPreview();
 
             renderer.EraseTrail();
         }
 
 
-        // Switches button states of exclusive button group: Start, Reset
+        /// <summary>
+        /// Switches button states of exclusive button group: Start, Reset
+        /// </summary>
         private void UpdateButtonStates()
         {
             StartButton.IsEnabled = !isRunnning;
             ResetButton.IsEnabled = isRunnning;
         }
 
-        // Makes color changes while pendulum at rest possible
+
+        /// <summary>
+        /// Handles Checked and Unchecked events for color switch checkbox, updating the preview when the box is (un-)ticked
+        /// </summary>
         private void ColorCheckBox_Changed(object sender, RoutedEventArgs e)
         {
             if (!isRunnning) { DrawPreview(); }
@@ -149,7 +190,7 @@ namespace double_pendulum
             {
                 if (Keyboard.FocusedElement is TextBox focusedTextBox)
                 {
-                    var binding = focusedTextBox.GetBindingExpression(TextBox.TextProperty);
+                    BindingExpression binding = focusedTextBox.GetBindingExpression(TextBox.TextProperty);
                     Console.WriteLine(TextBox.TextProperty);
                     binding?.UpdateSource();
                 }
@@ -157,6 +198,7 @@ namespace double_pendulum
                 FocusManager.SetFocusedElement(this, this);
             }
         }
+
 
         // Walk up visual tree of clicked element to check if it (or any parent) is of type T
         private static bool IsChildOfType<T>(DependencyObject element) where T : DependencyObject
@@ -172,4 +214,6 @@ namespace double_pendulum
     }
 }
 
-// TODO: Adjust initial slider values
+// TODO: = null! on top?
+// TODO: Install speed slider?
+// TODO: professional code?
