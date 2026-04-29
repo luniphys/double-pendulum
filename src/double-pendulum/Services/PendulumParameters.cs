@@ -4,9 +4,7 @@ namespace double_pendulum.Services;
 /// Represents the set of physical and initial state parameters for the double pendulum, set by the user.
 /// Values are read-only after construction.
 /// </summary>
-
-// Improvement: Use "record" instead of class for read-only classes.
-public class PendulumParameters
+public class PendulumParameters // Improvement: Use "record" instead of class for read-only classes.
 {
     public float Length1 { get; }
     public float Length2 { get; }

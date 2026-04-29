@@ -9,29 +9,29 @@ namespace double_pendulum.Views;
 /// <summary>
 /// Draws the lines (rods) and ellipses (bobs) plus a trail path on the canvas each frame.
 /// </summary>
-
 public class PendulumRenderer
 {
-    Canvas canvas;
-    Ellipse hangingPoint;
+    private Canvas canvas;
+    private Ellipse hangingPoint;
 
-    Line line1;
-    Line line2;
-    Ellipse ellipse1;
-    Ellipse ellipse2;
+    private Line line1;
+    private Line line2;
+    private Ellipse ellipse1;
+    private Ellipse ellipse2;
 
     private double hangingPointX;
     private double hangingPointY;
 
-    private double scale = 100;
+    private double scale = 100.0;
 
-    SolidColorBrush brush1 = new SolidColorBrush(Colors.White);
-    SolidColorBrush brush2 = new SolidColorBrush(Colors.White);
+    private SolidColorBrush brush1 = new SolidColorBrush(Colors.White);
+    private SolidColorBrush brush2 = new SolidColorBrush(Colors.White);
 
-    int MaxTrailLength;
+    private int MaxTrailLength;
 
-    Queue<(Point point, Color color)> pastPointsQueue;
-    List<Line> segmentPool;
+    private Queue<(Point point, Color color)> pastPointsQueue;
+    private List<Line> segmentPool;
+
 
 
     public PendulumRenderer(Canvas canvas)
@@ -54,6 +54,9 @@ public class PendulumRenderer
         canvas.Children.Add(ellipse2);
     }
 
+
+
+    #region Helper methods
 
     public void Draw(Vector4 position, bool recordTrail = true)
     {
@@ -95,6 +98,7 @@ public class PendulumRenderer
 
         DrawTrail(position2, brush2.Color, recordTrail);
     }
+
 
     public void DrawTrail(Vector2 position, Color color, bool recordTrail = true)
     {
@@ -139,6 +143,7 @@ public class PendulumRenderer
         }
     }
 
+
     public void EraseTrail()
     {
         pastPointsQueue.Clear();
@@ -147,6 +152,7 @@ public class PendulumRenderer
             segmentPool[i].Visibility = Visibility.Hidden;
         }
     }
+
 
     public void SetTrailLength(int length)
     {
@@ -177,6 +183,7 @@ public class PendulumRenderer
         }
     }
 
+
     private double MassToRadius(double mass)
     {
         const double MinRadius = 8;
@@ -187,6 +194,8 @@ public class PendulumRenderer
         double temp = (Math.Sqrt(mass) - Math.Sqrt(MinMass)) / (Math.Sqrt(MaxMass) - Math.Sqrt(MinMass));
         return MinRadius + temp * (MaxRadius - MinRadius);
     }
+
+
     public void UpdateRadii(double mass1, double mass2)
     {
         ellipse1.Width = MassToRadius(mass1);
@@ -201,5 +210,7 @@ public class PendulumRenderer
         brush1.Color = Color.FromRgb(r1, g1, b1);
         brush2.Color = Color.FromRgb(r2, g2, b2);
     }
+
+    #endregion
 }
 
