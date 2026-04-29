@@ -37,7 +37,39 @@ public class PendulumPhysics
 
 
 
-    #region Helper methods
+    #region Public methods
+
+    /// <summary>
+    /// Advancing the state vector for one time step.
+    /// </summary>
+    /// <remarks>Call RungeKutta4 method to update the current state by one integration step.</remarks>
+    public void Step()
+    {
+        State = RungeKutta4(State);
+    }
+    // Shorter version:
+    // public void Step() => State = RungeKutta4(State);
+
+
+    /// <summary>
+    /// Gets the current position for both pendulums in Cartesian coordinates.
+    /// </summary>
+    /// <returns>A <see cref="Vector4"/> structure containing the position in Cartesian coordinates.</returns>
+    public Vector4 GetPosition()
+    {
+        Vector4 cartesianPosition = PolarToCartesian(State);
+
+        return cartesianPosition;
+    }
+    // Shorter version:
+    // public Vector4 GetPosition() => PolarToCartesian(State);
+
+    #endregion
+
+
+
+    #region Private (helper) methods
+    // Only public due to PendulumPhysicsTests.cs!
 
     /// <summary>
     /// Calculates the time derivative of a state vector.
@@ -97,17 +129,6 @@ public class PendulumPhysics
 		return stateNew;
     }
 
-    /// <summary>
-    /// Advancing the state vector for one time step.
-    /// </summary>
-    /// <remarks>Call RungeKutta4 method to update the current state by one integration step.</remarks>
-    public void Step()
-    {
-        State = RungeKutta4(State);
-    }
-    // Shorter version:
-    // public void Step() => State = RungeKutta4(State);
-
 
     /// <summary>
     /// Converts polar vector to Cartesian vector
@@ -117,34 +138,20 @@ public class PendulumPhysics
     /// <returns>A Vector4 with Cartesian coordinates of the endpoints: (x1, y1, x2, y2), where (x1, y1) is the
     /// mass point of the first pendulum and (x2, y2) the one of the second.</returns>
     public Vector4 PolarToCartesian(Vector4 vector)
-	{
-		float angle1 = vector.X;
+    {
+        float angle1 = vector.X;
         float angle2 = vector.Y;
 
         float x1Position = _parameters.Length1 * MathF.Sin(angle1);
-		float y1Position = - _parameters.Length1 * MathF.Cos(angle1);
+        float y1Position = -_parameters.Length1 * MathF.Cos(angle1);
 
         float x2Position = x1Position + _parameters.Length2 * MathF.Sin(angle2);
         float y2Position = y1Position - _parameters.Length2 * MathF.Cos(angle2);
 
         Vector4 cartesianPosition = new Vector4(x1Position, y1Position, x2Position, y2Position);
 
-		return cartesianPosition;
-	}
-
-
-    /// <summary>
-    /// Gets the current position for both pendulums in Cartesian coordinates.
-    /// </summary>
-    /// <returns>A <see cref="Vector4"/> structure containing the position in Cartesian coordinates.</returns>
-    public Vector4 GetPosition()
-    {
-        Vector4 cartesianPosition = PolarToCartesian(State);
-
         return cartesianPosition;
     }
-    // Shorter version:
-    // public Vector4 GetPosition() => PolarToCartesian(State);
 
     #endregion
 }

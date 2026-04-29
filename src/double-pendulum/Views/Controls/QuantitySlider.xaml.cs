@@ -21,7 +21,7 @@ namespace double_pendulum.Views.Controls
 
 
 
-        #region Properties
+        #region Public Properties
 
         /// <summary>
         /// Color property of a QuantitiySlider's rail.
@@ -270,21 +270,3 @@ namespace double_pendulum.Views.Controls
         #endregion
     }
 }
-
-//  Property Guide:
-
-//  public int Name
-//  {
-//      get { return (int)GetValue(NameProperty); }                         Getters/Setters are only thin wrappers
-//      set { SetValue(NameProperty, value); }
-//  }
-//  public static readonly DependencyProperty NameProperty =                DependencyProperty is entire WPF internal storage/system table with key/token access,
-//  DependencyProperty.Register(                                            that provides extra integrated functionality.
-//                              nameof(Name),                               Name of property
-//                              typeof(int),                                Value type
-//                              typeof(QuantitySlider),                     Owner type
-//                              new PropertyMetadata(
-//                                                   Default value,
-//                                                   Change callback,       Can execute commands after value is changed by: (d, e) => { code; } or Method(),
-//                                                   Coerce callback)       Can execute commands after value is changed by: - "" -
-//                              );

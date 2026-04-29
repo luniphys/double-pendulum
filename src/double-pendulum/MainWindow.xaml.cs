@@ -186,7 +186,7 @@ namespace double_pendulum
 
 
 
-        #region Helper methods
+        #region Private (helper) methods
 
         /// <summary>
         /// Create new instance of the PendulumParameters class using the values from the sliders.
