@@ -18,6 +18,8 @@ public class PendulumParameters
 
     private const float DegreesToRadians = (float)(MathF.PI / 180.0f);
 
+
+
     public PendulumParameters(float length1, float length2, float mass1, float mass2, float angle1, float angle2, float damp)
     {
         this.Length1 = length1;

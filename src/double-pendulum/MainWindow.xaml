@@ -48,76 +48,90 @@
         </Style>
     </Window.Resources>
     
-    <!-- 3 Column setup -->
+    <!-- 2 Row setup -->
     <Grid Background="#FF1e1e1e">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="90*"/>
+            <RowDefinition Height="10*"/>
+        </Grid.RowDefinitions>
 
+        <!-- 3 Column setup -->
         <!-- Sliders for Lengths and Masses -->
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="50*"/>
-                <RowDefinition Height="10*"/>
-            </Grid.RowDefinitions>
-            <controls:QuantitySlider Grid.Row="0" x:Name="SliderL1" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₁" MinSliderValue="0.5" MaxSliderValue="4" QuantityValue="2" QuantityUnit="m" TickFrequency="0.5" ValueStringFormat="F1"/>
-            <controls:QuantitySlider Grid.Row="1" x:Name="SliderL2" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₂" MinSliderValue="0.5" MaxSliderValue="4" QuantityValue="1" QuantityUnit="m" TickFrequency="0.5" ValueStringFormat="F1"/>
-            <controls:QuantitySlider Grid.Row="2" x:Name="SliderM1" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₁" MinSliderValue="1" MaxSliderValue="250" QuantityValue="50" QuantityUnit="kg" TickFrequency="1"/>
-            <controls:QuantitySlider Grid.Row="3" x:Name="SliderM2" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₂" MinSliderValue="1" MaxSliderValue="250" QuantityValue="20" QuantityUnit="kg" TickFrequency="1"/>
-
-            <controls:QuantitySlider Grid.Row="5" x:Name="Speed" Margin="10,0,0,0" SliderColor="White" Quantity="Speed" MinSliderValue="0.1" MaxSliderValue="10" QuantityValue="1" TickFrequency="0.1" ValueStringFormat="F1"/>
-
-        </Grid>
-
-        <!-- Reset and Start Buttons -->
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="20*"/>
-                <RowDefinition Height="80*"/>
-            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Button x:Name="ResetButton" Margin="30,20,15,20" Background="Red" Content="Reset" Click="ResetButton_Click" IsEnabled="False"/>
-                <Button Grid.Column="1" x:Name="StartButton" Margin="15,20,30,20" Background="Green" Content="Start" Click="StartButton_Click"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="10*"/>
+                </Grid.RowDefinitions>
+                <controls:QuantitySlider Grid.Row="0" x:Name="SliderL1" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₁" MinSliderValue="0.5" MaxSliderValue="4" QuantityValue="2" QuantityUnit="m" TickFrequency="0.5" ValueStringFormat="F1"/>
+                <controls:QuantitySlider Grid.Row="1" x:Name="SliderL2" Margin="10,0,0,0" SliderColor="#2ba637" Quantity="L₂" MinSliderValue="0.5" MaxSliderValue="4" QuantityValue="1" QuantityUnit="m" TickFrequency="0.5" ValueStringFormat="F1"/>
+                <controls:QuantitySlider Grid.Row="2" x:Name="SliderM1" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₁" MinSliderValue="1" MaxSliderValue="250" QuantityValue="50" QuantityUnit="kg" TickFrequency="1"/>
+                <controls:QuantitySlider Grid.Row="3" x:Name="SliderM2" Margin="10,0,0,0" SliderColor="#2e60ab" Quantity="M₂" MinSliderValue="1" MaxSliderValue="250" QuantityValue="20" QuantityUnit="kg" TickFrequency="1"/>
+
+                <Button Grid.Row="5" x:Name="SpeedReset" Margin="30,10,30,10" Content="Reset Speed" Background="#FF2f2f2f" FontSize="18" Click="SpeedReset_Click" BorderBrush="Gray"/>
             </Grid>
-            <Grid Grid.Row="1">
-                <Canvas x:Name="PendulumCanvas" Background="Transparent" Loaded="PendulumCanvas_Loaded" SizeChanged="PendulumCanvas_SizeChanged"/>
+
+            <!-- Reset and Start Buttons -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20*"/>
+                    <RowDefinition Height="80*"/>
+                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="ResetButton" Margin="30,20,15,20" Background="Red" Content="Reset" Click="ResetButton_Click" IsEnabled="False"/>
+                    <Button Grid.Column="1" x:Name="StartButton" Margin="15,20,30,20" Background="Green" Content="Start" Click="StartButton_Click"/>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Canvas x:Name="PendulumCanvas" Background="Transparent" Loaded="PendulumCanvas_Loaded" SizeChanged="PendulumCanvas_SizeChanged"/>
+                </Grid>
             </Grid>
+
+            <!-- Sliders for Damping and inital angles -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="60*"/>
+                    <RowDefinition Height="10*"/>
+                </Grid.RowDefinitions>
+                <controls:QuantitySlider Grid.Row="0" x:Name="SliderD" Margin="0,0,10,0" SliderColor="#d62f4b" Quantity="D" MinSliderValue="0" MaxSliderValue="100" QuantityValue="2" QuantityUnit="" TickFrequency="1"/>
+                <controls:QuantitySlider Grid.Row="1" x:Name="SliderA1" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₁" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="105" QuantityUnit="°" TickFrequency="1"/>
+                <controls:QuantitySlider Grid.Row="2" x:Name="SliderA2" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₂" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="130" QuantityUnit="°" TickFrequency="1"/>
+
+                <!-- CheckBox to enable/disable colorization -->
+                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <CheckBox VerticalAlignment="Center" x:Name="ColorCheckBox" IsChecked="true" Checked="ColorCheckBox_Changed" Unchecked="ColorCheckBox_Changed"/>
+                    <TextBlock VerticalAlignment="Center" Text="Show Colors" Foreground="White" FontSize="20" FontWeight="Bold" Margin="8,0,0,1"/>
+                </StackPanel>
+             </Grid>
         </Grid>
 
-        <!-- Sliders for Damping and inital angles -->
-        <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="50*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-            </Grid.RowDefinitions>
-            <controls:QuantitySlider Grid.Row="0" x:Name="SliderD" Margin="0,0,10,0" SliderColor="#d62f4b" Quantity="D" MinSliderValue="0" MaxSliderValue="100" QuantityValue="2" QuantityUnit="" TickFrequency="1"/>
-            <controls:QuantitySlider Grid.Row="1" x:Name="SliderA1" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₁" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="110" QuantityUnit="°" TickFrequency="1"/>
-            <controls:QuantitySlider Grid.Row="2" x:Name="SliderA2" Margin="0,0,10,0" SliderColor="#e6de87" Quantity="θ₂" MinSliderValue="-180" MaxSliderValue="180" QuantityValue="130" QuantityUnit="°" TickFrequency="1"/>
+        <!-- Bottom Row for Simulation Speed & Trail Length -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="54*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="44*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- CheckBox to enable/disable colorization -->
-            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <CheckBox VerticalAlignment="Center" x:Name="ColorCheckBox" IsChecked="true" Checked="ColorCheckBox_Changed" Unchecked="ColorCheckBox_Changed"/>
-                <TextBlock VerticalAlignment="Center" Text="Show Colors" Foreground="White" FontSize="20" FontWeight="Bold" Margin="8,0,0,1"/>
-            </StackPanel>
-
-            <!-- Slider for trail length -->
-            <controls:QuantitySlider Grid.Row="5" x:Name="TrailLength" SliderColor="Purple" Quantity="Trail" MinSliderValue="0" MaxSliderValue="15" QuantityValue="3" QuantityUnit="" TickFrequency="0.5" ValueStringFormat="F1"/>
-
+            <controls:QuantitySlider x:Name="SpeedSlider" Margin="10,0,0,0" SliderColor="White" Quantity="Simulation Speed" MinSliderValue="0.1" MaxSliderValue="10" QuantityValue="1" TickFrequency="0.1" ValueStringFormat="F1"/>
+            <controls:QuantitySlider Grid.Column="2" x:Name="TrailLength" SliderColor="Purple" Quantity="Trail Length" MinSliderValue="0" MaxSliderValue="15" QuantityValue="5" QuantityUnit="" TickFrequency="0.5" ValueStringFormat="F1"/>
         </Grid>
-
+        
     </Grid>
 </Window>

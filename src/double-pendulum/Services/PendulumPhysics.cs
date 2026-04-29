@@ -1,6 +1,4 @@
 ﻿using System.Numerics;
-using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace double_pendulum.Services;
 
@@ -11,16 +9,12 @@ public class PendulumPhysics
 {
 	private const float Gravity = 9.81f;
 
-    private const float DefaultStepSize = 0.01f;
+    private const float DefaultStepSize = 0.001f;
     public float StepSize { get; set; } = DefaultStepSize;
 
     private readonly PendulumParameters _parameters;
 
-    /// <summary>
-    /// Current simulation state: (θ₁, θ₂, ω₁, ω₂).
-    /// </summary>
-    public Vector4 State { get; set; }
-
+    
 
     public PendulumPhysics(PendulumParameters parameters)
 	{
@@ -34,29 +28,52 @@ public class PendulumPhysics
         State = new Vector4(startingAngle1, startingAngle2, startingAngularVelocity1, startingAngularVelocity2);
     }
 
+
+
+    /// <summary>
+    /// Current simulation state: (θ₁, θ₂, ω₁, ω₂).
+    /// </summary>
+    public Vector4 State { get; set; }
+
+
+
+    #region Helper methods
+
     /// <summary>
     /// Calculates the time derivative of a state vector.
     /// </summary>
     /// <param name="vector">A state vector of the form (angle1, angle2, angularVelocity1, angularVelocity2).</param>
     /// <returns>The derivate of the vector in the form (angularVelocity1, angularVelocity2, angularAcceleration1, angularAcceleration2)</returns>
-	public Vector4 Derivative(Vector4 vector)
+    public Vector4 Derivative(Vector4 vector)
 	{
-		float angle1 = vector.X;
+        float length1 = _parameters.Length1;
+        float length2 = _parameters.Length2;
+        float mass1 = _parameters.Mass1;
+        float mass2 = _parameters.Mass2;
+        float damp = _parameters.Damp;
+
+        float angle1 = vector.X;
 		float angle2 = vector.Y;
 		float angularVelocity1 = vector.Z;
 		float angularVelocity2 = vector.W;
 
-		Matrix<double> equationOfMotionMatrix = DenseMatrix.OfArray(new double[,] { { (_parameters.Mass1 + _parameters.Mass2) * _parameters.Length1, _parameters.Mass2 * _parameters.Length2 * MathF.Cos(angle1 - angle2) },
-																 { _parameters.Mass2 * _parameters.Length1 * MathF.Cos(angle1 - angle2), _parameters.Mass2 * _parameters.Length2 } });
+        float cosDelta = MathF.Cos(angle1 - angle2);
+        float sinDelta = MathF.Sin(angle1 - angle2);
 
-		MathNet.Numerics.LinearAlgebra.Vector<double> equationOfMotionVector = DenseVector.OfArray(new double[] {  - _parameters.Mass2 * _parameters.Length2 * MathF.Pow(angularVelocity2,2) * MathF.Sin(angle1 - angle2) - (_parameters.Mass1 + _parameters.Mass2) * Gravity * MathF.Sin(angle1) - _parameters.Damp * angularVelocity1,
-                                                                                                _parameters.Mass2 * _parameters.Length1 * MathF.Pow(angularVelocity1,2) * MathF.Sin(angle1 - angle2) - _parameters.Mass2 * Gravity * MathF.Sin(angle2) - _parameters.Damp * angularVelocity2});
+        // 2x2 matrix for equation of motion
+        float mX1 = (mass1 + mass2) * length1;
+        float mX2 = mass2 * length2 * cosDelta;
+        float mY1 = mass2 * length1 * cosDelta;
+        float mY2 = mass2 * length2;
 
-		Matrix<double> equationOfMotionInverse = equationOfMotionMatrix.Inverse();
-		MathNet.Numerics.LinearAlgebra.Vector<double> angularAccelerationVector = equationOfMotionInverse * equationOfMotionVector;
+        // vector for equation of motion
+        float vX = -mass2 * length2 * MathF.Pow(angularVelocity2, 2) * sinDelta - (mass1 + mass2) * Gravity * MathF.Sin(angle1) - damp * angularVelocity1;
+        float vY = mass2 * length1 * MathF.Pow(angularVelocity1, 2) * sinDelta - mass2 * Gravity * MathF.Sin(angle2) - damp * angularVelocity2;
 
-		float angularAcceleration1 = (float)angularAccelerationVector[0];
-        float angularAcceleration2 = (float)angularAccelerationVector[1];
+        // Inverse of matrix: (1/det) * [[mY2, -mX2], [-mY1, MX1]]
+        float det = mX1 * mY2 - mY1 * mX2;
+        float angularAcceleration1 = (float)((mY2 * vX - mX2 * vY) / det);
+        float angularAcceleration2 = (float)((-mY1 * vX + mX1 * vY) / det);
 
         Vector4 vectorDerivative = new Vector4(angularVelocity1, angularVelocity2, angularAcceleration1, angularAcceleration2);
 
@@ -128,4 +145,6 @@ public class PendulumPhysics
     }
     // Shorter version:
     // public Vector4 GetPosition() => PolarToCartesian(State);
+
+    #endregion
 }

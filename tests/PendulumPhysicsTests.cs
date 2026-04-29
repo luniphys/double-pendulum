@@ -26,6 +26,7 @@ public class PendulumPhysicsTests
     private readonly Vector4 _state;
 
 
+
     public PendulumPhysicsTests()
     {
         _angle1 = 95.4f;
@@ -43,6 +44,8 @@ public class PendulumPhysicsTests
         _state.Z = _angularVelocity1;
         _state.W = _angularVelocity2;
     }
+
+
 
     #region Testing one explicit case
 
@@ -157,6 +160,7 @@ public class PendulumPhysicsTests
     }
 
     #endregion
+
 
 
     #region Specific physical cases

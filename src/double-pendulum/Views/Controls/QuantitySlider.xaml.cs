@@ -10,6 +10,19 @@ namespace double_pendulum.Views.Controls
 {
     public partial class QuantitySlider : UserControl
     {
+        private static readonly Regex NumericRegex = new(@"^-?\d*\.?\d*$", RegexOptions.Compiled);
+
+
+
+        public QuantitySlider()
+        {
+            InitializeComponent();
+        }
+
+
+
+        #region Properties
+
         /// <summary>
         /// Color property of a QuantitiySlider's rail.
         /// </summary>
@@ -144,14 +157,11 @@ namespace double_pendulum.Views.Controls
                                                              "F0",
                                                              OnValueStringFormatChanged));
 
+        #endregion
 
 
-        public QuantitySlider()
-        {
-            InitializeComponent();
-        }
 
-
+        #region Event handlers
 
         /// <summary>
         /// Eventhandler ensures, that the value falls within the minimum and maximum slider limits.
@@ -234,8 +244,7 @@ namespace double_pendulum.Views.Controls
             }
         }
 
-
-        private static readonly Regex NumericRegex = new(@"^-?\d*\.?\d*$", RegexOptions.Compiled); 
+         
         /// <summary>
         /// Handler prevents non numerical input in ValueTextBox.
         /// </summary>
@@ -257,6 +266,8 @@ namespace double_pendulum.Views.Controls
                 e.Handled = true;
             }
         }
+
+        #endregion
     }
 }
 

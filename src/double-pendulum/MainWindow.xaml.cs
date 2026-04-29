@@ -7,20 +7,20 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace double_pendulum
 {
     public partial class MainWindow : Window
 
     {
-        PendulumPhysics pendulum = null!;
-        PendulumRenderer renderer = null!;
+        private PendulumPhysics _pendulum = null!;
+        private PendulumRenderer _renderer = null!;
 
-        bool isRunnning = false;
+        private bool _isRunning = false;
 
-        double _stepAccumulator = 0.0;
-        TimeSpan _lastRenderTime = TimeSpan.Zero;
+        private double _stepAccumulator;
+        private TimeSpan _lastRenderTime = TimeSpan.Zero;
+
 
 
         public MainWindow()
@@ -29,21 +29,8 @@ namespace double_pendulum
         }
 
 
-        /// <summary>
-        /// Create new instance of the PendulumParameters class using the values from the sliders.
-        /// </summary>
-        private PendulumParameters BuildParameters()
-        {
-            return new PendulumParameters(
-                (float)SliderL1.QuantityValue,
-                (float)SliderL2.QuantityValue,
-                (float)SliderM1.QuantityValue,
-                (float)SliderM2.QuantityValue,
-                (float)SliderA1.QuantityValue,
-                (float)SliderA2.QuantityValue,
-                (float)SliderD.QuantityValue);
-        }
-        
+
+        #region Event handlers
 
         /// <summary>
         /// Initializing the pendulum renderer and setting up the inital pendulum. Adds functionality that continiously
@@ -51,9 +38,9 @@ namespace double_pendulum
         /// </summary>
         private void PendulumCanvas_Loaded(object sender, RoutedEventArgs e)
         {
-            renderer = new PendulumRenderer(PendulumCanvas);
+            _renderer = new PendulumRenderer(PendulumCanvas);
 
-            renderer.SetTrailLength((int)(TrailLength.QuantityValue * 100));
+            _renderer.SetTrailLength((int)(TrailLength.QuantityValue * 100));
 
             DrawPreview();
 
@@ -65,10 +52,10 @@ namespace double_pendulum
 
             foreach (QuantitySlider slider in sliders)
             {
-                descriptor.AddValueChanged(slider, (s, args) => { if (!isRunnning) DrawPreview(); });
+                descriptor.AddValueChanged(slider, (s, args) => { if (!_isRunning) DrawPreview(); });
             }
 
-            descriptor.AddValueChanged(TrailLength, (s, args) => { renderer.SetTrailLength((int)(TrailLength.QuantityValue * 100)); });
+            descriptor.AddValueChanged(TrailLength, (s, args) => { _renderer.SetTrailLength((int)(TrailLength.QuantityValue * 100)); });
         }
 
 
@@ -77,29 +64,7 @@ namespace double_pendulum
         /// </summary>
         private void PendulumCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (!isRunnning) { DrawPreview(); }
-        }
-
-
-        /// <summary>
-        /// Draws a preview of the double pendulum with the initial slider values
-        /// </summary>
-        /// <remarks>Ensures blue color (zero velocity) or white depending on ColorCheckBox. Sets radii
-        /// corresponding to pendulums masses.</remarks>
-        private void DrawPreview()
-        {
-            if (renderer == null) { return; }
-
-            renderer.EraseTrail();
-
-            if (ColorCheckBox.IsChecked == true) { renderer.ChangeColor(0, 0, 255, 0, 0, 255); }
-            else { renderer.ChangeColor(255, 255, 255, 255, 255, 255); }
-
-            renderer.UpdateRadii(SliderM1.QuantityValue, SliderM2.QuantityValue);
-
-            PendulumParameters parameters = BuildParameters();
-            PendulumPhysics previewPendulum = new PendulumPhysics(parameters);
-            renderer.Draw(previewPendulum.GetPosition());
+            if (!_isRunning) { DrawPreview(); }
         }
 
 
@@ -108,66 +73,52 @@ namespace double_pendulum
         /// </summary>
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            isRunnning = true;
-            _stepAccumulator = 0;
-            _lastRenderTime = TimeSpan.MinValue;
+            _isRunning = true;
             UpdateButtonStates();
-
+            
             PendulumParameters parameters = BuildParameters();
-            pendulum = new PendulumPhysics(parameters);
+            _pendulum = new PendulumPhysics(parameters);
+
+            _stepAccumulator = 0.0;
+            _lastRenderTime = TimeSpan.MinValue;
 
             CompositionTarget.Rendering += OnRendering;
         }
 
-
+        
         /// <summary>
-        /// Fires at every frame (synced to GPU) to advance pendulum simulation and redraw its state depending on a given speed.
+        /// Fires at every frame (synced to GPU) to advance pendulum simulation and redraw its state.
+        /// Also updates pendulums color depenging on ColorCheckBox.
         /// </summary>
-        /// <remarks>If the ColorCheckBox is enabled, the pendulum's colors will be based on
-        /// their angular velocities. Otherwise, the pendulums are rendered in white.</remarks>
+        /// 
         private void OnRendering(object? sender, EventArgs e)
         {
             var renderArgs = (RenderingEventArgs)e;
-            if (renderArgs.RenderingTime == _lastRenderTime) { return; }
 
-            if (_lastRenderTime == TimeSpan.MinValue)
+            if (_lastRenderTime == TimeSpan.MinValue) // .MinValue is special first frame value. Checking if its first frame -> Save time & skip.
             {
                 _lastRenderTime = renderArgs.RenderingTime;
                 return;
             }
 
+            if (renderArgs.RenderingTime == _lastRenderTime) { return; } // Avoid double event firing per frame
+
             double elapsedMs = (renderArgs.RenderingTime - _lastRenderTime).TotalMilliseconds;
             _lastRenderTime = renderArgs.RenderingTime;
 
-            _stepAccumulator += elapsedMs * Speed.QuantityValue * 0.06;
+            _stepAccumulator += elapsedMs * SpeedSlider.QuantityValue * 0.65;
 
             bool stepped = false;
             while (_stepAccumulator >= 1.0)
             {
-                pendulum.Step();
+                _pendulum.Step();
                 _stepAccumulator -= 1.0;
                 stepped = true;
             }
 
-            renderer.Draw(pendulum.GetPosition(), recordTrail: stepped);
+            _renderer.Draw(_pendulum.GetPosition(), recordTrail: stepped);
 
-
-            if (ColorCheckBox.IsChecked == true)
-            {
-                const double maxAngularVelocity = 10.0;
-
-                double angularVelocity1 = Math.Min(Math.Abs(pendulum.State.Z), maxAngularVelocity);
-                byte red1 = (byte)(angularVelocity1 / maxAngularVelocity * 255);
-
-                double angularVelocity2 = Math.Min(Math.Abs(pendulum.State.W), maxAngularVelocity);
-                byte red2 = (byte)(angularVelocity2 / maxAngularVelocity * 255);
-
-                renderer.ChangeColor(red1, 0, (byte)(255 - red1), red2, 0, (byte)(255 - red2));
-            }
-            else
-            {
-                renderer.ChangeColor(255, 255, 255, 255, 255, 255);
-            }
+            UpdatePendulumColor();
         }
 
 
@@ -176,23 +127,13 @@ namespace double_pendulum
         /// </summary>
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
-            isRunnning = false;
+            _isRunning = false;
             UpdateButtonStates();
+
+            _renderer.EraseTrail();
 
             CompositionTarget.Rendering -= OnRendering;
             DrawPreview();
-
-            renderer.EraseTrail();
-        }
-
-
-        /// <summary>
-        /// Switches button states of exclusive button group: Start, Reset
-        /// </summary>
-        private void UpdateButtonStates()
-        {
-            StartButton.IsEnabled = !isRunnning;
-            ResetButton.IsEnabled = isRunnning;
         }
 
 
@@ -201,7 +142,16 @@ namespace double_pendulum
         /// </summary>
         private void ColorCheckBox_Changed(object sender, RoutedEventArgs e)
         {
-            if (!isRunnning) { DrawPreview(); }
+            if (!_isRunning) { DrawPreview(); }
+        }
+
+
+        /// <summary>
+        /// Normalizes Simulation Speed for SpeedSlider to 1.0x
+        /// </summary>
+        private void SpeedReset_Click(object sender, RoutedEventArgs e)
+        {
+            SpeedSlider.QuantityValue = 1.0;
         }
 
 
@@ -232,6 +182,82 @@ namespace double_pendulum
             }
         }
 
+        #endregion
+
+
+
+        #region Helper methods
+
+        /// <summary>
+        /// Create new instance of the PendulumParameters class using the values from the sliders.
+        /// </summary>
+        private PendulumParameters BuildParameters()
+        {
+            return new PendulumParameters(
+                (float)SliderL1.QuantityValue,
+                (float)SliderL2.QuantityValue,
+                (float)SliderM1.QuantityValue,
+                (float)SliderM2.QuantityValue,
+                (float)SliderA1.QuantityValue,
+                (float)SliderA2.QuantityValue,
+                (float)SliderD.QuantityValue);
+        }
+
+
+        /// <summary>
+        /// Draws a preview of the double pendulum with the initial slider values
+        /// </summary>
+        /// <remarks>Ensures blue color (zero velocity) or white depending on ColorCheckBox. Sets radii
+        /// corresponding to pendulums masses.</remarks>
+        private void DrawPreview()
+        {
+            if (_renderer is null) { return; }
+
+            _renderer.EraseTrail();
+
+            if (ColorCheckBox.IsChecked == true) { _renderer.ChangeColor(0, 0, 255, 0, 0, 255); }
+            else { _renderer.ChangeColor(255, 255, 255, 255, 255, 255); }
+
+            _renderer.UpdateRadii(SliderM1.QuantityValue, SliderM2.QuantityValue);
+
+            PendulumParameters parameters = BuildParameters();
+            PendulumPhysics previewPendulum = new PendulumPhysics(parameters);
+            _renderer.Draw(previewPendulum.GetPosition());
+        }
+
+
+        /// <summary>
+        /// Updates the pendulum's color based on its angular velocities and the state of the color selection checkbox.
+        /// </summary>
+        private void UpdatePendulumColor()
+        {
+            if (ColorCheckBox.IsChecked != true)
+            {
+                _renderer.ChangeColor(255, 255, 255, 255, 255, 255);
+                return;
+            }
+
+            const double maxAngularVelocity = 10.0;
+
+            double angularVelocity1 = Math.Min(Math.Abs(_pendulum.State.Z), maxAngularVelocity);
+            byte red1 = (byte)(angularVelocity1 / maxAngularVelocity * 255);
+
+            double angularVelocity2 = Math.Min(Math.Abs(_pendulum.State.W), maxAngularVelocity);
+            byte red2 = (byte)(angularVelocity2 / maxAngularVelocity * 255);
+
+            _renderer.ChangeColor(red1, 0, (byte)(255 - red1), red2, 0, (byte)(255 - red2));
+        }
+
+
+        /// <summary>
+        /// Switches button states of exclusive button group: Start, Reset
+        /// </summary>
+        private void UpdateButtonStates()
+        {
+            StartButton.IsEnabled = !_isRunning;
+            ResetButton.IsEnabled = _isRunning;
+        }
+
 
         /// <summary>
         /// Determines whether an element is a child of a specific type.
@@ -246,7 +272,7 @@ namespace double_pendulum
             }
             return false;
         }
+
+        #endregion
     }
 }
-
-// TODO: professional code?
