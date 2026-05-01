@@ -47,8 +47,7 @@ public class PendulumPhysics
     {
         State = RungeKutta4(State);
     }
-    // Shorter version:
-    // public void Step() => State = RungeKutta4(State);
+    // Shorter version: public void Step() => State = RungeKutta4(State);
 
 
     /// <summary>
@@ -61,8 +60,7 @@ public class PendulumPhysics
 
         return cartesianPosition;
     }
-    // Shorter version:
-    // public Vector4 GetPosition() => PolarToCartesian(State);
+    // Shorter version: public Vector4 GetPosition() => PolarToCartesian(State);
 
     #endregion
 

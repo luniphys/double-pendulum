@@ -8,7 +8,6 @@ namespace double_pendulum.Tests;
 /// differential equations, Runge-Kutta integration, simulation step updates and correct coordinate transformation via example with randomly chosen values.
 /// Also trivial physical properties are tested.
 /// </summary>
-
 public class PendulumPhysicsTests
 {
     private const float DegreesToRadians = MathF.PI / 180.0f;

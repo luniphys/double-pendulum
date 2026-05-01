@@ -46,6 +46,32 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style TargetType="CheckBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Border x:Name="checkBorder" Width="22" Height="22" Background="Transparent"
+                                BorderThickness="2" BorderBrush="White" CornerRadius="6">
+                            <TextBlock x:Name="checkMark" Text="✔" FontSize="14" FontWeight="Bold" Foreground="White"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Margin="0,0,0,3" Visibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="checkMark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="checkBorder" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="checkBorder" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     
     <!-- 2 Row setup -->

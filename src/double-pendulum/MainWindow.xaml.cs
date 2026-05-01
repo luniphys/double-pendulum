@@ -108,15 +108,13 @@ namespace double_pendulum
 
             _stepAccumulator += elapsedMs * SpeedSlider.QuantityValue * 0.65;
 
-            bool stepped = false;
             while (_stepAccumulator >= 1.0)
             {
                 _pendulum.Step();
                 _stepAccumulator -= 1.0;
-                stepped = true;
             }
 
-            _renderer.Draw(_pendulum.GetPosition(), recordTrail: stepped);
+            _renderer.Draw(_pendulum.GetPosition());
 
             UpdatePendulumColor();
         }
@@ -276,3 +274,6 @@ namespace double_pendulum
         #endregion
     }
 }
+
+// TODO: Check overall repo
+// TODO: MVVM ?
