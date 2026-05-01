@@ -5,7 +5,7 @@
 # Double Pendulum
 
 <p align="center">
-    <img src="docs/Images/example_image.png" width="800" alt="GUI image">
+    <img src="docs/Images/gui_image.png" width="800" alt="GUI image">
 </p>
 
 ## Mathematics
