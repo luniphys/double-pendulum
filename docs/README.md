@@ -1,13 +1,8 @@
-# Docs
+# docs
 
-This directory ...
+This directory contains supplementary assets for the repository documentation.
 
 ## Contents
 
-- `file1`: description
-- `directory1/`: description
-- `directory2/`: description
-
-## Notes
-
-- Notes about files/directories
+- `Images/`: Screenshots and images used in the top-level README
+  - `gui_image.png`: Screenshot of the application GUI
