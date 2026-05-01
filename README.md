@@ -30,16 +30,17 @@ The double pendulum is a classical example of a chaotic dynamical system. Small 
 
 The simulation pipeline is:
 
-1. Sets arm lengths, masses, initial angles, damping coefficient, simulation speed and trail length via sliders.
+1. Sets physical parameters, simulation speed and trail length via sliders.
 2. At each frame, the physics engine advances the state by integrating the equations of motion using **RK4**.
 3. The renderer converts the polar state $(\theta_1, \theta_2)$ to Cartesian coordinates and draws the pendulum on a WPF canvas.
+4. Reset pendulum for launching with different parameters.
 
 
 ## Features
 
 - Real-time simulation with configurable step size
 - Adjustable arm lengths, masses, initial angles, damping coefficient, simulation speed and trail length
-- Switchable colorization of the individual pendulums and its trail depending on their angular velocity.
+- Switchable colorization of the individual pendulums and its trail depending on their angular velocity
 
 
 ## Requirements
@@ -116,7 +117,7 @@ $$
 $$
 ```
 
-This allows the two second-order equations to be rewritten as a first-order system $\dot{\vec{y}} = \vec{f}(\vec{y})$:
+This allows the two second-order equations to be rewritten as a first-order system:
 
 ```math
 $$
@@ -126,7 +127,7 @@ $$
 
 ### Solving for Angular Accelerations
 
-The angular accelerations $(\ddot{\theta}_1, \ddot{\theta}_2)$ are obtained by solving the linear system $A \cdot \ddot{\vec{\theta}} = C$:
+The angular accelerations $(\ddot{\theta}_1, \ddot{\theta}_2)$ are obtained by solving the linear system:
 
 ```math
 $$
