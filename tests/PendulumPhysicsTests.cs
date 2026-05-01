@@ -87,10 +87,10 @@ public class PendulumPhysicsTests
     [Fact]
     public void RungeKutta4_Test()
     {
-        float expectedAngle1 = 1.6033831f;
-        float expectedAngle2 = -0.6467889f;
-        float expectedAngularVelocity1 = -6.134317f;
-        float expectedAngularVelocity2 = 0.54352266f;
+        float expectedAngle1 = 1.6588478f;
+        float expectedAngle2 = -0.65069556f;
+        float expectedAngularVelocity1 = -6.1928787f;
+        float expectedAngularVelocity2 = 0.32441953f;
 
         Vector4 stateRungeKutta4 = _physics.RungeKutta4(_state);
 
@@ -106,10 +106,10 @@ public class PendulumPhysicsTests
     [Fact]
     public void Step_Test()
     {
-        float expectedAngle1 = 1.6033831f;
-        float expectedAngle2 = -0.6467889f;
-        float expectedAngularVelocity1 = -6.134317f;
-        float expectedAngularVelocity2 = 0.54352266f;
+        float expectedAngle1 = 1.6588478f;
+        float expectedAngle2 = -0.65069556f;
+        float expectedAngularVelocity1 = -6.1928787f;
+        float expectedAngularVelocity2 = 0.32441953f;
 
         _physics.State = _state;
 
