@@ -1,5 +1,5 @@
 ﻿using double_pendulum.Services;
-using double_pendulum.Views;
+using double_pendulum.Views.Rendering;
 using double_pendulum.Views.Controls;
 using System.ComponentModel;
 using System.Windows;

@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace double_pendulum.Views;
+namespace double_pendulum.Views.Rendering;
 
 /// <summary>
 /// Draws the lines (rods) and ellipses (bobs) plus a trail path on the canvas each frame.
