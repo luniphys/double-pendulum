@@ -1,4 +1,4 @@
-namespace double_pendulum.Models;
+namespace double_pendulum.Services;
 
 /// <summary>
 /// Represents the set of physical and initial state parameters for the double pendulum, set by the user.

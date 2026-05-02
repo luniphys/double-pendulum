@@ -1,4 +1,4 @@
-﻿using double_pendulum.Models;
+﻿using double_pendulum.Services;
 using double_pendulum.Views;
 using double_pendulum.Views.Controls;
 using System.ComponentModel;

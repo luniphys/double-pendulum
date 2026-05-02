@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\dp-icon.ico" />
+    <None Remove="Resources\dp-icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\dp-icon.ico" />
+    <Resource Include="Resources\Icons\dp-icon.ico" />
   </ItemGroup>
 
 </Project>

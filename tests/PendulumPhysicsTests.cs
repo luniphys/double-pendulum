@@ -1,4 +1,4 @@
-using double_pendulum.Models;
+using double_pendulum.Services;
 using System.Numerics;
 
 namespace double_pendulum.Tests;
