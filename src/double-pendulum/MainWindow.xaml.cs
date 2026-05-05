@@ -90,7 +90,6 @@ namespace double_pendulum
         /// Fires at every frame (synced to GPU) to advance pendulum simulation and redraw its state.
         /// Also updates pendulums color depenging on ColorCheckBox.
         /// </summary>
-        /// 
         private void OnRendering(object? sender, EventArgs e)
         {
             var renderArgs = (RenderingEventArgs)e;
@@ -274,5 +273,3 @@ namespace double_pendulum
         #endregion
     }
 }
-
-// TODO: MVVM ?
