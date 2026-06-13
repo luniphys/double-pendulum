@@ -60,3 +60,4 @@ src/double-pendulum/bin/
 src/double-pendulum/obj/
 src/double-pendulum/.vs/
 *.user
+output/simulation_*

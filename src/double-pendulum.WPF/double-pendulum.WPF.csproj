@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <RootNamespace>double_pendulum</RootNamespace>
+    <RootNamespace>double_pendulum.WPF</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
@@ -20,6 +20,10 @@
 
   <ItemGroup>
     <Resource Include="Resources\Icons\dp-icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\double-pendulum.Core\double-pendulum.Core.csproj" />
   </ItemGroup>
 
 </Project>

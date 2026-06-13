@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace double_pendulum
+namespace double_pendulum.WPF
 {
     /// <summary>
     /// Interaction logic for App.xaml

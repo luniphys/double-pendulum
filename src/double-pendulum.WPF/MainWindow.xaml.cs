@@ -1,14 +1,15 @@
-﻿using double_pendulum.Services;
-using double_pendulum.Views.Rendering;
-using double_pendulum.Views.Controls;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace double_pendulum
+using double_pendulum.Core;
+using double_pendulum.Views.Rendering;
+using double_pendulum.Views.Controls;
+
+namespace double_pendulum.WPF
 {
     public partial class MainWindow : Window
 

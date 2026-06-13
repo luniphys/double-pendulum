@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/double-pendulum/double-pendulum.csproj" />
+    <Project Path="src/double-pendulum.CLI/double-pendulum.CLI.csproj" Id="dd68857d-55bd-4686-b729-0415c0dfacb8" />
+    <Project Path="src/double-pendulum.Core/double-pendulum.Core.csproj" Id="22dfd4e3-824c-41fe-9449-5f99aed0e8e0" />
+    <Project Path="src/double-pendulum.WPF/double-pendulum.WPF.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/double-pendulum.Tests.csproj" />
