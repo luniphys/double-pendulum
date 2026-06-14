@@ -1,19 +1,21 @@
 ﻿using double_pendulum.Core;
+using System.Globalization;
 
 namespace double_pendulum.CLI;
 
-public class InputHandler
+public static class InputHandler
 {
     /// <summary>
     /// Prompts user to input parameter values via console.
     /// </summary>
-    /// <returns>Initial parameter values as PendulumParameters object.</returns>
+    /// <returns>Initial parameter values as <see cref="PendulumParameters"/> object.</returns>
     public static PendulumParameters ReadParameters()
     {
+        Console.WriteLine("\n-------------------------------------------------------------------------------");
         float length1 = ReadValue("Enter length of pendulum 1 in [m]:", "[1 nm, 1 km]", 0.000000001f, 1000.0f);
         float length2 = ReadValue("Enter length of pendulum 2 in [m]:", "[1 nm, 1 km]", 0.000000001f, 1000.0f);
         float mass1 = ReadValue("Enter mass of pendulum 1 in [kg]:", "[1 μg, 1000 kg]", 0.000000001f, 1000.0f);
-        float mass2 = ReadValue("Enter mass of pendulum 2 in [kg]:", " [1 μg, 1000 kg]", 0.000000001f, 1000.0f);
+        float mass2 = ReadValue("Enter mass of pendulum 2 in [kg]:", "[1 μg, 1000 kg]", 0.000000001f, 1000.0f);
         float angle1 = ReadValue("Enter starting angle of pendulum 1 in [°]:", "[-180°, 180°]", -180.0f, 180.0f);
         float angle2 = ReadValue("Enter starting angle of pendulum 2 in [°]:", "[-180°, 180°]", -180.0f, 180.0f);
         float damp = ReadValue("Enter damping coefficient:", "[0, 1000]", 0, 1000);
@@ -35,18 +37,16 @@ public class InputHandler
         while (true)
         {
             Console.WriteLine(prompt);
+            string input = Console.ReadLine() ?? string.Empty;
 
-            if (float.TryParse(Console.ReadLine(), out float value))
+            if (float.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out float value))
             {
                 if (value >= minValue && value <= maxValue)
                 {
                     Console.WriteLine();
                     return value;
                 }
-                else
-                {
-                    Console.WriteLine($"Stay within range! {range}\n");
-                }
+                Console.WriteLine($"Stay within range! {range}\n");
             }
             else
             {
