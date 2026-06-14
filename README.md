@@ -7,7 +7,7 @@
 
 # Double Pendulum
 
-A WPF desktop application that simulates a double pendulum in real time. The physics are solved numerically using a 4th-order Runge-Kutta integrator. Pendulum parameters (arm lengths, masses, initial angles, damping), simulation speed as well as the trail length can be adjusted interactively via sliders.
+A desktop application that simulates a double pendulum in real time. The physics are solved numerically using a 4th-order Runge-Kutta integrator. Pendulum parameters (arm lengths, masses, initial angles, damping), simulation speed as well as the trail length can be adjusted interactively via sliders.
 
 <p align="center">
     <img src="docs/Images/gui_image.png" width="800" alt="GUI image">
@@ -44,6 +44,7 @@ The simulation pipeline is:
 - Real-time simulation with configurable step size
 - Adjustable arm lengths, masses, initial angles, damping coefficient, simulation speed and trail length
 - Switchable colorization of the individual pendulums and its trail depending on their angular velocity
+- Possible raw data output of positions as json file in CLI project part
 
 
 ## Requirements
@@ -59,18 +60,53 @@ Clone the repository and run the application from the solution root:
 ```sh
 git clone https://github.com/luniphys/double-pendulum.git
 cd double-pendulum
-dotnet run --project src/double-pendulum
 ```
 
-To build without running:
+Running the WPF part:
 
 ```sh
-dotnet build
+dotnet run --project src/double-pendulum.WPF
+```
+
+Running the CLI part:
+
+```sh
+dotnet run --project src/double-pendulum.CLI
 ```
 
 
-## Docker 
+## Docker
 
+A Dockerfile is included to provide a reproducible runtime environment. Since WPF GUI's have no native docker container support, only the CLI application part has a buildable image.
+
+### Build the image
+
+From the repository root, build the Docker image:
+
+```bash
+docker build -t double-pendulum .
+```
+
+### Pull from Docker Hub
+
+A prebuilt image is also available on [Docker Hub](https://hub.docker.com/r/luniphys/double-pendulum):
+
+```bash
+docker pull luniphys/double-pendulum
+```
+
+### Run the container
+
+```bash
+docker run --rm -it \
+  -v "$(pwd)/output:/app/output" \
+  double-pendulum
+```
+
+### Notes
+
+- Run the container in interactive mode: ```-it```
+- json output stored in output/ directory
 
 
 ## Testing
