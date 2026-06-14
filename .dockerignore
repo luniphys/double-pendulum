@@ -1,0 +1,12 @@
+.github/
+.git/
+.gitignore
+
+docs/
+tests/
+output/example_simulation_13-06-2026__16-48-08.json
+
+LICENSE
+README.md
+
+src/double-pendulum.WPF/

@@ -142,8 +142,9 @@ public static class SimulationPrinter
         if (answer != "y" && answer != "yes") { return; }
 
 
-        string rootPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
-        string outputPath = Path.Combine(rootPath, "output");
+        //string rootPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+        //string outputPath = Path.Combine(rootPath, "output");
+        string outputPath = Path.Combine(Directory.GetCurrentDirectory(), "output");
         Directory.CreateDirectory(outputPath);
 
         string timestamp = DateTime.Now.ToString("dd-MM-yyyy__HH-mm-ss");
