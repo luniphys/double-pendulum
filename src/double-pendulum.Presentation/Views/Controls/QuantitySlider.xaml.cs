@@ -5,7 +5,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace double_pendulum.Views.Controls
+namespace double_pendulum.Presentation.Views.Controls
 {
     public partial class QuantitySlider : UserControl
     {

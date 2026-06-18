@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\double-pendulum.Core\double-pendulum.Core.csproj" />
+    <ProjectReference Include="..\double-pendulum.Model\double-pendulum.Model.csproj" />
   </ItemGroup>
 
 </Project>

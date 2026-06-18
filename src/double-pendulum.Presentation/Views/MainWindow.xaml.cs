@@ -5,11 +5,11 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
-using double_pendulum.Core;
-using double_pendulum.Views.Rendering;
-using double_pendulum.Views.Controls;
+using double_pendulum.Model;
+using double_pendulum.Presentation.Views.Rendering;
+using double_pendulum.Presentation.Views.Controls;
 
-namespace double_pendulum.WPF
+namespace double_pendulum.Presentation
 {
     public partial class MainWindow : Window
 

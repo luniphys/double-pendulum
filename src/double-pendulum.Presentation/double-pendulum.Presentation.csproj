@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <RootNamespace>double_pendulum.WPF</RootNamespace>
+    <RootNamespace>double_pendulum.Presentation</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\double-pendulum.Core\double-pendulum.Core.csproj" />
+    <ProjectReference Include="..\double-pendulum.Model\double-pendulum.Model.csproj" />
   </ItemGroup>
 
 </Project>

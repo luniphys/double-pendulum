@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\double-pendulum.Core\double-pendulum.Core.csproj" />
+    <ProjectReference Include="..\src\double-pendulum.Model\double-pendulum.Model.csproj" />
   </ItemGroup>
 
   <ItemGroup>

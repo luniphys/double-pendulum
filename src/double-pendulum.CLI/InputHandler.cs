@@ -1,4 +1,4 @@
-﻿using double_pendulum.Core;
+﻿using double_pendulum.Model;
 using System.Globalization;
 
 namespace double_pendulum.CLI;

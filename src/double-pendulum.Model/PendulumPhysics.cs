@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace double_pendulum.Core;
+namespace double_pendulum.Model;
 
 /// <summary>
 /// Provides physics simulation for a double pendulum using numerical integration method Runge-Kutta of 4th order.
