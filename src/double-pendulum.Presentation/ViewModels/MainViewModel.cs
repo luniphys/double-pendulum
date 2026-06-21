@@ -1,12 +1,7 @@
 ﻿using double_pendulum.Model;
 using double_pendulum.Presentation.Commands;
-using double_pendulum.Presentation.Views.Controls;
 using double_pendulum.Presentation.Views.Rendering;
-using System.ComponentModel;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -40,6 +35,8 @@ public sealed class MainViewModel : ViewModelBase
     private double _stepAccumulator;
     private TimeSpan _lastRenderTime = TimeSpan.Zero;
 
+    private const double maxAngularVelocity = 10.0;
+
     #endregion
 
 
@@ -47,15 +44,15 @@ public sealed class MainViewModel : ViewModelBase
     public MainViewModel()
     {
         StartCommand = new RelayCommand(
-            execute:    _ => StartMethod(),
+            execute: _ => Start(),
             canExecute: _ => !_isRunning);
 
         ResetCommand = new RelayCommand(
-            execute:    _ => ResetMethod(),
+            execute: _ => Reset(),
             canExecute: _ => _isRunning);
 
         SpeedResetCommand = new RelayCommand(
-            execute:    _ => SpeedResetMethod(),
+            execute: _ => SpeedReset(),
             canExecute: _ => true);
     }
 
@@ -63,20 +60,124 @@ public sealed class MainViewModel : ViewModelBase
 
     #region Public Properties
 
-    public double Length1 { get => _length1; set => SetField(ref _length1, value); }
-    public double Length2 { get => _length2; set => SetField(ref _length2, value); }
-    public double Mass1 { get => _mass1; set => SetField(ref _mass1, value); }
-    public double Mass2 { get => _mass2; set => SetField(ref _mass2, value); }
-    public double Angle1 { get => _angle1; set => SetField(ref _angle1, value); }
-    public double Angle2  { get => _angle2; set => SetField(ref _angle2, value); }
-    public double Damp { get => _damp; set => SetField(ref _damp, value); }
+    public double Length1
+    {
+        get => _length1;
+        set
+        {
+            if (SetField(ref _length1, value) && !_isRunning)
+            {
+                DrawPreview();
+            }
+        }
+    }
+    public double Length2
+    {
+        get => _length2;
+        set
+        {
+            if (SetField(ref _length2, value) && !_isRunning)
+            {
+                DrawPreview();
+            }
+        }
+    }
+    public double Mass1
+    {
+        get => _mass1;
+        set
+        {
+            if (SetField(ref _mass1, value) && !_isRunning)
+            {
+                DrawPreview();
+            }
+        }
+    }
+    public double Mass2
+    {
+        get => _mass2;
+        set
+        {
+            if (SetField(ref _mass2, value) && !_isRunning)
+            {
+                DrawPreview();
+            }
+        }
+    }
+    public double Angle1
+    {
+        get => _angle1;
+        set
+        {
+            if (SetField(ref _angle1, value) && !_isRunning)
+            {
+                DrawPreview();
+            }
+        }
+    }
+    public double Angle2 
+    { 
+        get => _angle2; 
+        set 
+        { 
+            if (SetField(ref _angle2, value) && !_isRunning) 
+            { 
+                DrawPreview(); 
+            } 
+        } 
+    }
+    public double Damp 
+    { 
+        get => _damp; 
+        set 
+        { 
+            if (SetField(ref _damp, value) && !_isRunning) 
+            {
+                DrawPreview(); 
+            } 
+        } 
+    }
 
-    public double SimSpeed { get => _simSpeed; set => SetField(ref _simSpeed, value); }
-    public double TrailLength { get => _trailLength; set => SetField(ref _trailLength, value); }
+    public bool ShowColors 
+    { 
+        get => _showColors; 
+        set 
+        { 
+            if (SetField(ref _showColors, value) && !_isRunning) 
+            { 
+                DrawPreview(); 
+            } 
+        } 
+    }
+    public double SimSpeed 
+    { 
+        get => _simSpeed; 
+        set => SetField(ref _simSpeed, value); 
+    }
+    public double TrailLength
+    {
+        get => _trailLength;
+        set
+        {
+            if (SetField(ref _trailLength, value))
+            {
+                _renderer?.SetTrailLength((int)(_trailLength * 100));
+            }
+        }
+    }
 
-    public bool ShowColors { get => _showColors; set => SetField(ref _showColors, value); }
-
-    public bool IsRunning { get => _isRunning; set => SetField(ref _isRunning, value); }
+    public bool IsRunning
+    {
+        get => _isRunning;
+        set
+        {
+            if (SetField(ref _isRunning, value))
+            {
+                OnPropertyChanged(nameof(IsNotRunning));
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+    }
     public bool IsNotRunning => !_isRunning;
 
 
@@ -91,12 +192,45 @@ public sealed class MainViewModel : ViewModelBase
 
 
 
+    #region Public methods
+
+    /// <summary>
+    /// Initializing the pendulum renderer and setting up the inital pendulum.
+    /// </summary>
+    public void Initialize(Canvas pendulumCanvas)
+    {
+        _renderer = new PendulumRenderer(pendulumCanvas);
+
+        _renderer.SetTrailLength((int)(_trailLength * 100));
+
+        DrawPreview();
+    }
+
+
+    /// <summary>
+    /// Handles the SizeChanged event of the canvas to update the pendulum when window size is changed.
+    /// </summary>
+    public void OnCanvasSizeChanged()
+    {
+        if (!IsRunning) { DrawPreview(); }
+    }
+
+    #endregion
+
+
+
+
+
     #region Private methods
 
     // Command methods
-    private void StartMethod()
+
+    /// <summary>
+    /// Handles the StartButton click event via ICommand. Sets up parameters, physics and starts the simulation.
+    /// </summary>
+    private void Start()
     {
-        _isRunning = true;
+        IsRunning = true;
 
         PendulumParameters parameters = BuildParameters();
         _pendulum = new PendulumPhysics(parameters);
@@ -107,9 +241,13 @@ public sealed class MainViewModel : ViewModelBase
         CompositionTarget.Rendering += OnRendering;
     }
 
-    private void ResetMethod()
+
+    /// <summary>
+    /// Handles the ResetButton click event via ICommand. Resets pendulum to current state of the sliders.
+    /// </summary>
+    private void Reset()
     {
-        _isRunning = false;
+        IsRunning = false;
 
         _renderer?.EraseTrail();
 
@@ -117,47 +255,17 @@ public sealed class MainViewModel : ViewModelBase
         DrawPreview();
     }
 
-    private void SpeedResetMethod()
-    {
-        _simSpeed = 1.0;
-    }
 
+    /// <summary>
+    /// Handles the SpeedResetButton click event via ICommand. Sets simulation speed back to 1.0 (real time).
+    /// </summary>
+    private void SpeedReset()
+    {
+        SimSpeed = 1.0;
+    }
 
 
     // Helper methods
-
-    /// <summary>
-    /// Fires at every frame (synced to GPU) to advance pendulum simulation and redraw its state.
-    /// Also updates pendulums color depenging on ColorCheckBox.
-    /// </summary>
-    private void OnRendering(object? sender, EventArgs e)
-    {
-        var renderArgs = (RenderingEventArgs)e;
-
-        if (_lastRenderTime == TimeSpan.MinValue) // .MinValue is special first frame value. Checking if its first frame -> Save time & skip.
-        {
-            _lastRenderTime = renderArgs.RenderingTime;
-            return;
-        }
-
-        if (renderArgs.RenderingTime == _lastRenderTime) { return; } // Avoid double event firing per frame
-
-        double elapsedMs = (renderArgs.RenderingTime - _lastRenderTime).TotalMilliseconds;
-        _lastRenderTime = renderArgs.RenderingTime;
-
-        _stepAccumulator += elapsedMs * _simSpeed * 0.65;
-
-        while (_stepAccumulator >= 1.0)
-        {
-            _pendulum?.Step();
-            _stepAccumulator -= 1.0;
-        }
-
-        _renderer?.Draw(_pendulum.GetPosition());
-
-        UpdatePendulumColor();
-    }
-
 
     /// <summary>
     /// Create new instance of the PendulumParameters class using the slider values.
@@ -178,7 +286,7 @@ public sealed class MainViewModel : ViewModelBase
     /// <summary>
     /// Draws a preview of the double pendulum with the initial slider values
     /// </summary>
-    /// <remarks>Ensures blue/red color or white depending on ColorCheckBox. Sets radii
+    /// <remarks>Ensures blue/red color or white depending on ShowColors. Sets radii
     /// corresponding to pendulums masses.</remarks>
     private void DrawPreview()
     {
@@ -198,17 +306,53 @@ public sealed class MainViewModel : ViewModelBase
 
 
     /// <summary>
+    /// Fires at every frame (synced to GPU) to advance pendulum simulation and redraw its state.
+    /// Also updates pendulums color depenging on ShowColors.
+    /// </summary>
+    private void OnRendering(object? sender, EventArgs e)
+    {
+        var renderArgs = (RenderingEventArgs)e;
+
+        if (_lastRenderTime == TimeSpan.MinValue) // .MinValue is special first frame value. Checking if its first frame -> Save time & skip.
+        {
+            _lastRenderTime = renderArgs.RenderingTime;
+            return;
+        }
+
+        if (renderArgs.RenderingTime == _lastRenderTime) { return; } // Avoid double event firing per frame
+
+        double elapsedMs = (renderArgs.RenderingTime - _lastRenderTime).TotalMilliseconds;
+        _lastRenderTime = renderArgs.RenderingTime;
+
+        _stepAccumulator += elapsedMs * _simSpeed * 0.65;
+
+
+        if (_renderer is not null && _pendulum is not null)
+        {
+            while (_stepAccumulator >= 1.0)
+            {
+                _pendulum.Step();
+                _stepAccumulator -= 1.0;
+            }
+
+            _renderer.Draw(_pendulum.GetPosition());
+            UpdatePendulumColor();
+        }
+    }
+
+
+    /// <summary>
     /// Updates the pendulum's color based on its angular velocities and the state of the color checkbox.
     /// </summary>
     private void UpdatePendulumColor()
     {
-        if (_showColors)
+        if (_pendulum is null) { return; }
+
+        if (!_showColors)
         {
             _renderer?.ChangeColor(255, 255, 255, 255, 255, 255);
             return;
         }
-
-        const double maxAngularVelocity = 10.0;
 
         double angularVelocity1 = Math.Min(Math.Abs(_pendulum.State.Z), maxAngularVelocity);
         byte red1 = (byte)(angularVelocity1 / maxAngularVelocity * 255);

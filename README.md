@@ -4,7 +4,6 @@
 [![Docker](https://img.shields.io/badge/Docker-%230db7ed.svg?&logo=docker&logoColor=white)](https://hub.docker.com/r/luniphys/double-pendulum)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-
 # Double Pendulum
 
 A desktop application that simulates a double pendulum in real time. The physics are solved numerically using a 4th-order Runge-Kutta integrator. Pendulum parameters (arm lengths, masses, initial angles, damping), simulation speed as well as the trail length can be adjusted interactively via sliders.
@@ -12,7 +11,6 @@ A desktop application that simulates a double pendulum in real time. The physics
 <p align="center">
     <img src="docs/Images/gui_image.png" width="800" alt="GUI image">
 </p>
-
 
 ## Table of Contents
 
@@ -26,18 +24,22 @@ A desktop application that simulates a double pendulum in real time. The physics
 - [Mathematics](#mathematics)
 - [License](#license)
 
-
 ## Overview
 
 The double pendulum is a classical example of a chaotic dynamical system. Small differences in initial conditions lead to vastly different trajectories over time. This application lets you explore that behaviour interactively by configuring the physical parameters of the system and watching the simulation evolve in real time.
 
+The project is split into three separate components:
+
+- **Model** — physics engine and parameter types, shared by both frontends
+- **CLI** — console application for raw data output
+- **Presentation** — WPF application built with MVVM
+
 The simulation pipeline is:
 
-1. Sets physical parameters, simulation speed and trail length via sliders.
+1. Set physical parameters, simulation speed and trail length via sliders (Presentation) or console prompts (CLI).
 2. At each frame, the physics engine advances the state by integrating the equations of motion using **RK4**.
 3. The renderer converts the polar state $(\theta_1, \theta_2)$ to Cartesian coordinates and draws the pendulum on a WPF canvas.
-4. Reset pendulum for launching with different parameters.
-
+4. Reset the pendulum for launching with different parameters.
 
 ## Features
 
@@ -46,12 +48,10 @@ The simulation pipeline is:
 - Switchable colorization of the individual pendulums and its trail depending on their angular velocity
 - Possible raw data output of positions as json file in CLI project part
 
-
 ## Requirements
 
 - Windows
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
-
 
 ## Build & Run
 
@@ -62,18 +62,17 @@ git clone https://github.com/luniphys/double-pendulum.git
 cd double-pendulum
 ```
 
-Running the WPF part:
+Running the WPF application:
 
 ```sh
-dotnet run --project src/double-pendulum.WPF
+dotnet run --project src/double-pendulum.Presentation
 ```
 
-Running the CLI part:
+Running the CLI application:
 
 ```sh
 dotnet run --project src/double-pendulum.CLI
 ```
-
 
 ## Docker
 
@@ -105,9 +104,8 @@ docker run --rm -it \
 
 ### Notes
 
-- Run the container in interactive mode: ```-it```
+- Run the container in interactive mode: `-it`
 - json output stored in output/ directory
-
 
 ## Testing
 
@@ -126,15 +124,26 @@ Tests are written with **xUnit** and cover:
 - Coordinate transformation
 - Physical properties: pendulum at rest stays at rest, energy conservation with and without damping
 
-
 ## Project Structure
 
 ```
-src/double-pendulum/    # WPF application and physics backend
-tests/                  # xUnit unit tests
-docs/                   # Documentation assets
+src/
+  double-pendulum.Model/          # Physics engine and parameter types (shared)
+    PendulumParameters.cs
+    PendulumPhysics.cs
+  double-pendulum.Presentation/   # WPF application (MVVM)
+    Commands/                     # RelayCommand
+    ViewModels/                   # MainViewModel, ViewModelBase
+    Views/
+      Controls/                   # Custom controls (QuantitySlider)
+      Rendering/                  # PendulumRenderer
+      MainWindow.xaml
+  double-pendulum.CLI/            # Console application
+    InputHandler.cs
+    SimulationPrinter.cs
+tests/                            # xUnit unit tests
+docs/                             # Documentation assets
 ```
-
 
 ## Mathematics
 
@@ -197,7 +206,6 @@ $$
 $$
 
 where $h$ is the step size between consecutive time stamps $t_i$ and $t_{i+1}$.
-
 
 ## License
 

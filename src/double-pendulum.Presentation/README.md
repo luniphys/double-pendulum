@@ -1,15 +1,16 @@
-# src/double-pendulum
+# src/double-pendulum.Presentation
 
-WPF application simulating a double pendulum using 4th-order Runge-Kutta numerical integration.
+WPF application for real-time simulation of the double pendulum. Built with MVVM architecture and powered by the `double-pendulum.Model` physics engine.
 
 ## Contents
 
-- `Resources/`: Images and icons for the GUI
-- `Services/`: Physics simulation backend
-  - `PendulumPhysics.cs`: RK4 integration engine
-  - `PendulumParameters.cs`: Simulation configuration
-- `Views/`: Rendering and UI controls
-  - `Rendering/PendulumRenderer.cs`: Draws the pendulum on the canvas
-  - `Controls/QuantitySlider.xaml`: Reusable slider control for adjusting parameters
+- `Commands/RelayCommand.cs`: Generic `ICommand` implementation for binding UI actions to ViewModel logic
+- `ViewModels/`:
+  - `ViewModelBase.cs`: Base class implementing `INotifyPropertyChanged`
+  - `MainViewModel.cs`: ViewModel managing simulation state, slider bindings and render loop
+- `Views/`:
+  - `MainWindow.xaml` / `MainWindow.xaml.cs`: Main application window
+  - `Rendering/PendulumRenderer.cs`: Draws the pendulum on a WPF canvas
+  - `Controls/QuantitySlider.xaml`: Slider controls used for all parameter inputs
+- `Resources/`: Application assets
 - `App.xaml` / `App.xaml.cs`: Application entry point
-- `MainWindow.xaml` / `MainWindow.xaml.cs`: Main window and simulation host
